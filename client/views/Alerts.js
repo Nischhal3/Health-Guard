@@ -5,12 +5,16 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import Colors from "../utils/Colors";
 import Headers from "../components/Headers";
-import Alert from "../components/Alert";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import Notification from "../components/Notification";
 const Alerts = ({ navigation }) => {
   // Generate an array of 10 fake sample notifications
   const notifications = Array.from({ length: 30 }, (_, index) => ({
@@ -21,6 +25,9 @@ const Alerts = ({ navigation }) => {
     }`,
   }));
 
+  const clearAllNotifications = () => {
+    console.log("clear notifications");
+  };
   return (
     <SafeAreaView style={styles.container}>
       <Headers navDirection="Alerts" navigation={navigation} />
@@ -31,34 +38,37 @@ const Alerts = ({ navigation }) => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <ScrollView>
-              <Alert title={item.title} message={item.message} />
+              <Notification title={item.title} message={item.message} />
             </ScrollView>
           )}
         />
       </View>
-      <Text style={styles.clearText}>Clear All Notification</Text>
+      <TouchableOpacity onPress={clearAllNotifications}>
+        <Text style={styles.clearText}>Clear All Notification</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
+    height: hp("100%"),
+    width: wp("100%"),
     backgroundColor: Colors.primary,
   },
   notificationText: {
+    marginTop: -25,
     color: Colors.white,
-    marginTop: 35,
     fontSize: 30,
     textDecorationLine: "underline",
-    fontWeight: "bold",
     alignSelf: "center",
   },
   notificationContainer: {
     backgroundColor: Colors.secondary,
-    height: "70%",
+    height: hp("75%"),
+    width: wp("90%"),
     marginTop: 20,
-    marginHorizontal: 40,
+    marginHorizontal: 20,
     borderRadius: 15,
     display: "flex",
   },

@@ -7,6 +7,7 @@ import {
   View,
 } from "react-native";
 import Colors from "../utils/Colors";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 const FormInput = (props) => {
   return (
@@ -47,34 +48,33 @@ const FormNavigationText = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginLeft: 40,
+    marginLeft: 20,
   },
   text: {
     marginLeft: 10,
-    marginTop: 20,
+    marginTop: 10,
     fontSize: 20,
     color: Colors.white,
   },
   input: {
     backgroundColor: Colors.white,
-    width: "80%",
+    width: wp("85%"),
     borderRadius: 15,
     height: 40,
     marginTop: 15,
-    marginBottom: 15,
+    marginBottom: 5,
   },
   buttonContainer: {
     display: "flex",
     alignItems: "center",
-    marginTop: 25,
-    marginRight: 50,
+    marginTop: 15,
   },
   button: {
     backgroundColor: Colors.secondary,
     alignItems: "center",
     padding: 10,
     borderRadius: 15,
-    width: "40%",
+    width: wp("40%"),
   },
   buttonText: {
     color: Colors.white,
@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
     color: Colors.white,
     alignSelf: "center",
     marginTop: 20,
-    marginRight: 45,
     fontSize: 18,
   },
 });

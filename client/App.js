@@ -9,8 +9,8 @@ import Home from "./views/Home";
 import { useContext } from "react";
 import Rooms from "./views/Rooms";
 import Settings from "./views/Settings";
-import Alerts from "./views/Alerts";
 import History from "./views/History";
+import Alerts from "./views/Alerts";
 
 const Stack = createStackNavigator();
 

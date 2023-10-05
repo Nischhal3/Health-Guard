@@ -1,20 +1,21 @@
 import React from "react";
-import { Image, SafeAreaView, StyleSheet } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import LogoImage from "../assets/logo.png";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 const Logo = () => {
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Image source={LogoImage} />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    marginTop: 50,
-    height: 150,
+    height: hp("18%"),
+    marginTop: 10,
   },
 });
 

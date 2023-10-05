@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Colors from "../utils/Colors";
 import deleteIcon from "../assets/delete.png";
 
-const Alert = (props) => {
+const Notification = (props) => {
   const handleDelete = () => {
     console.log("Delet button pressed");
   };
@@ -26,27 +26,30 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     margin: 10,
-    borderRadius: 20,
   },
   titleContainer: {
     flexDirection: "row",
     backgroundColor: Colors.alertTitleBackgorund,
     justifyContent: "space-between",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
   title: {
     color: Colors.alertTitle,
-    padding: 5,
     marginLeft: 10,
     marginTop: 5,
     fontSize: 18,
+    textDecorationLine: "underline",
   },
   deleteIcon: {
-    margin: 15,
+    margin: 10,
     width: 18,
     height: 18,
   },
   messageContainer: {
     backgroundColor: Colors.alertMessageBackground,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
   message: {
     color: Colors.alertMessag,
@@ -54,4 +57,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-export default Alert;
+export default Notification;
