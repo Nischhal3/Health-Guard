@@ -17,7 +17,10 @@ const Settings = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity onPress={handleBackButton}>
+      <TouchableOpacity
+        style={{ marginLeft: 15, marginTop: 15 }}
+        onPress={handleBackButton}
+      >
         <Image source={backButton} />
       </TouchableOpacity>
       <Text>Settings</Text>

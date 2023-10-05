@@ -20,6 +20,7 @@ const HomeButton = (props) => {
     borderRadius: 20,
     marginBottom: 70,
   };
+
   return (
     <SafeAreaView style={container}>
       <TouchableOpacity style={styles.interface} onPress={handleButton}>

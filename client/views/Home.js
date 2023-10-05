@@ -16,7 +16,10 @@ import HomeIcon from "../assets/home.png";
 import HistroyIcon from "../assets/history.png";
 import logOut from "../assets/log-out.png";
 import settings from "../assets/settings.png";
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 const Home = ({ navigation }) => {
   const navDirection = "Home";
 
@@ -30,10 +33,10 @@ const Home = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleLogOut}>
+        <TouchableOpacity style={{ marginLeft: 20 }} onPress={handleLogOut}>
           <Image source={logOut} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleSettings}>
+        <TouchableOpacity style={{ marginRight: 20 }} onPress={handleSettings}>
           <Image source={settings} />
         </TouchableOpacity>
       </View>
@@ -47,15 +50,16 @@ const Home = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
+    height: hp("100%"),
+    width: wp("100%"),
     backgroundColor: Colors.primary,
   },
   header: {
     marginTop: 15,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 16, // Add padding for spacing from edges
-    paddingTop: 16, // Add padding for spacing from the top
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
 });
 

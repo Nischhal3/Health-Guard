@@ -12,10 +12,10 @@ const Headers = ({ navigation, navDirection }) => {
   };
   return (
     <View style={styles.header}>
-      <TouchableOpacity onPress={handlebackButton}>
+      <TouchableOpacity style={{ marginLeft: 10 }} onPress={handlebackButton}>
         <Image source={backButton} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleSettings}>
+      <TouchableOpacity style={{ marginRight: 10 }} onPress={handleSettings}>
         <Image source={settings} />
       </TouchableOpacity>
     </View>
