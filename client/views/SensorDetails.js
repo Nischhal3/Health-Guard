@@ -8,8 +8,9 @@ import {
 } from "react-native";
 import Colors from "../utils/Colors";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
+import Headers from "../components/Headers";
 
-export const SensorDetails = () => {
+export const SensorDetails = ({ navigation }) => {
   const [temp, setTemp] = useState(18);
   // temp default value to be replaced by sensor temp value
   const minTemp = 15;
@@ -44,41 +45,44 @@ export const SensorDetails = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.circleContainer}>
-        <AnimatedCircularProgress
-          size={200}
-          width={30}
-          fill={convertedValue}
-          rotation={230}
-          tintColor={
-            temp <= 18
-              ? Colors.cold
-              : temp > 18 && temp <= 28
-              ? Colors.chill
-              : Colors.hot
-          }
-          arcSweepAngle={260}
-          backgroundColor={Colors.secondary}
-          //style={styles.circle}
-          //dashedBackground={{ width: 20, gap: 10 }}
-        />
-        <Text style={styles.temp}>{`${temp} °C`}</Text>
-      </View>
-      <Text style={styles.tempText}>Temperature</Text>
-      <View style={styles.btnContainer}>
-        <TouchableOpacity
-          style={[styles.button, styles.btnPlus]}
-          onPress={increaseTemp}
-        >
-          <Text style={styles.btnText}>+</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.btnMinus]}
-          onPress={decreaseTemp}
-        >
-          <Text style={styles.btnText}>-</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={{ backgroundColor: Colors.primary }}>
+      <Headers navDirection="SensorDetails" navigation={navigation} />
+      <View style={styles.container}>
+        <View style={styles.circleContainer}>
+          <AnimatedCircularProgress
+            size={200}
+            width={30}
+            fill={convertedValue}
+            rotation={230}
+            tintColor={
+              temp <= 18
+                ? Colors.cold
+                : temp > 18 && temp <= 28
+                ? Colors.chill
+                : Colors.hot
+            }
+            arcSweepAngle={260}
+            backgroundColor={Colors.secondary}
+            //style={styles.circle}
+            //dashedBackground={{ width: 20, gap: 10 }}
+          />
+          <Text style={styles.temp}>{`${temp} °C`}</Text>
+        </View>
+        <Text style={styles.tempText}>Temperature</Text>
+        <View style={styles.btnContainer}>
+          <TouchableOpacity
+            style={[styles.button, styles.btnPlus]}
+            onPress={increaseTemp}
+          >
+            <Text style={styles.btnText}>+</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.btnMinus]}
+            onPress={decreaseTemp}
+          >
+            <Text style={styles.btnText}>-</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -102,7 +106,6 @@ const convertTempValueToBarRange = (
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.primary,
     height: "100%",
     display: "flex",
     alignContent: "center",
