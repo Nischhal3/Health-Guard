@@ -11,6 +11,7 @@ import Rooms from "./views/Rooms";
 import Settings from "./views/Settings";
 import History from "./views/History";
 import Alerts from "./views/Alerts";
+import { SensorDetails } from "./views/SensorDetails";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,7 @@ const App = () => {
             <Stack.Screen name="Alerts" component={Alerts} />
             <Stack.Screen name="History" component={History} />
             <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="SensorDetails" component={SensorDetails} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>
