@@ -9,6 +9,10 @@ import {
 import Colors from "../utils/Colors";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import Headers from "../components/Headers";
+import SensorData from "../components/SensorData";
+import sunIcon from "../assets/sun.png";
+import runningIcon from "../assets/running.png";
+import humidityIcon from "../assets/humidity.png";
 
 export const SensorDetails = ({ navigation }) => {
   const [temp, setTemp] = useState(18);
@@ -83,6 +87,9 @@ export const SensorDetails = ({ navigation }) => {
             <Text style={styles.btnText}>-</Text>
           </TouchableOpacity>
         </View>
+        <SensorData imageIcon={sunIcon} size={30} height={30} />
+        <SensorData imageIcon={humidityIcon} size={30} height={30} />
+        <SensorData imageIcon={runningIcon} size={30} height={35} />
       </View>
     </SafeAreaView>
   );
