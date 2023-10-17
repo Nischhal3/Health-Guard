@@ -79,4 +79,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Dependency directories
+server/node_modules/
+server/jspm_packages/
+
+# .env file
+server/.env
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode
