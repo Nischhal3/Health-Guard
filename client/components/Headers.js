@@ -5,9 +5,14 @@ import settings from "../assets/settings.png";
 
 const Headers = ({ navigation, navDirection }) => {
   const handlebackButton = () => {
-    navigation.navigate("Home");
+    if (navDirection === "SensorDetails") {
+      navigation.navigate("Rooms");
+    } else {
+      navigation.navigate("Home");
+    }
   };
   const handleSettings = () => {
+    console.log("Header navigation");
     navigation.navigate("Settings", { navDirection });
   };
   return (

@@ -6,4 +6,7 @@ export default {
   alertMessageBackground: "#EEEEEE",
   alertTitle: "#282424",
   alertMessag: "#B73636",
+  hot: "#FF0000",
+  chill: "#00FF00",
+  cold: "#00e0ff",
 };

@@ -10,31 +10,38 @@ import Colors from "../utils/Colors";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 const FormInput = (props) => {
+  const { title, value, onChange, secret } = props;
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{props.title}</Text>
-      <TextInput style={styles.input} />
+      <Text style={styles.text}>{title}</Text>
+      <TextInput
+        style={styles.input}
+        value={value}
+        onChangeText={onChange}
+        secureTextEntry={secret}
+      />
     </View>
   );
 };
 
 const FormButton = (props) => {
-  const handleButtonPress = () => {
-    if (props.navigation === undefined) {
-      return;
-    }
-    props.navigation.navigate("Home");
-  };
+  const { title, submit } = props;
 
   return (
     <View style={styles.buttonContainer}>
-      <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
-        <Text style={styles.buttonText}>{props.title}</Text>
+      <TouchableOpacity style={styles.button} onPress={submit}>
+        <Text style={styles.buttonText}>{title}</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
+const ErrorMessage = (props) => {
+  const { error, message } = props;
+  return (
+    <View>{error && <Text style={styles.errorText}>{message}</Text>}</View>
+  );
+};
 const FormNavigationText = (props) => {
   const handleTextPress = () => {
     props.setFormToggle(!props.formToggle);
@@ -87,6 +94,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 18,
   },
+  errorText: {
+    color: "red",
+    marginBottom: 12,
+  },
 });
 
-export { FormInput, FormButton, FormNavigationText };
+export { FormInput, FormButton, FormNavigationText, ErrorMessage };
