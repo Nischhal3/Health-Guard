@@ -17,6 +17,7 @@ import Logo from "../views/Logo";
 import { useForm, Controller } from "react-hook-form";
 
 const LoginForm = (props) => {
+  const { formToggle, setFormToggle, navigation } = props;
   const {
     control,
     handleSubmit,
@@ -29,7 +30,8 @@ const LoginForm = (props) => {
   });
   const onSubmit = (data) => {
     // Handle form submission
-    console.log("data", data);
+    console.log("Login", data);
+    navigation.navigate("Home");
   };
   return (
     <SafeAreaView style={{ height: "100%" }}>
@@ -57,6 +59,7 @@ const LoginForm = (props) => {
           control={control}
           render={({ field }) => (
             <FormInput
+              title="Password"
               placeholder="Enter your password"
               secret={true}
               value={field.value}
@@ -71,6 +74,18 @@ const LoginForm = (props) => {
               message: "Password must be at least 8 characters long",
             },
           }}
+          // rules={{
+          //   required: { value: true, message: "This field cannot be empty" },
+          //   pattern: {
+          //     /**
+          //      *  Password criteria
+          //      *  Minimum length 8 , atlease 1 digit
+          //      *  Atleast 1 upper case of lower case character
+          //      */
+          //     value: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/,
+          //     message: "Min 8 characters, uppercase & number",
+          //   },
+          // }}
         />
         <ErrorMessage
           error={errors?.password}
@@ -81,8 +96,8 @@ const LoginForm = (props) => {
       </View>
       <FormNavigationText
         title="Don't have an account? Register Here!"
-        formToggle={props.formToggle}
-        setFormToggle={props.setFormToggle}
+        formToggle={formToggle}
+        setFormToggle={setFormToggle}
       />
     </SafeAreaView>
   );

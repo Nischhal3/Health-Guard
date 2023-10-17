@@ -26,12 +26,6 @@ const FormInput = (props) => {
 
 const FormButton = (props) => {
   const { title, submit } = props;
-  const handleButtonPress = () => {
-    if (props.navigation === undefined) {
-      return;
-    }
-    props.navigation.navigate("Home");
-  };
 
   return (
     <View style={styles.buttonContainer}>
