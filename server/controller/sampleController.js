@@ -3,9 +3,10 @@
 const { getAllNews, testData } = require("../model/sampleModel");
 
 const get_all_data = async (req, res) => {
-  const news = await testData();
-  if (news.length > 0) {
-    res.json(news);
+  //res.json({ message: `News not found`, status: 409 });
+  const data = await testData();
+  if (data.length > 0) {
+    res.json(data);
   } else {
     res.json({ message: `News not found`, status: 409 });
   }
