@@ -18,19 +18,19 @@ const Stack = createStackNavigator();
 
 const App = () => {
   const { isLoggedIn } = useContext(MainContext);
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
 
-  useEffect(() => {
-    async function fetchNews() {
-      const response = await fetchData();
-      setData(response);
-    }
-    fetchNews();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchNews() {
+  //     const response = await fetchData();
+  //     setData(response);
+  //   }
+  //   fetchNews();
+  // }, []);
 
-  data.forEach((item) => {
-    console.log("my-data", item);
-  });
+  // data.forEach((item) => {
+  //   console.log("my-data", item);
+  // });
   return (
     <MainProvider>
       <SafeAreaView style={[styles.container, GlobalStyles.AndroidSafeArea]}>

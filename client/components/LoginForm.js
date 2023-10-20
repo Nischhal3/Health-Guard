@@ -29,8 +29,10 @@ const LoginForm = (props) => {
     },
   });
   const onSubmit = (data) => {
+    const formData = new FormData();
+    //formData.append("name", data.username);
+    //formData.append("age", 29);
     // Handle form submission
-    console.log("Login", data);
     navigation.navigate("Home");
   };
   return (

@@ -1,15 +1,15 @@
-const fetchData = async () => {
+import { baseUrl } from "../utils/Variables";
+
+export const fetchData = async () => {
   try {
-    const response = await fetch("https://98d5-195-148-98-153.ngrok-free.app/");
+    const response = await fetch(`${baseUrl}/sample`);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const jsonData = await response.json();
-    return jsonData
+    return jsonData;
   } catch (error) {
-    console.error('Error fetching data:', error.message);
+    console.error("Error fetching data:", error.message);
   }
 };
-
-export { fetchData }

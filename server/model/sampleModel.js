@@ -11,4 +11,16 @@ const testData = async () => {
   }
 };
 
-module.exports = { testData };
+const postData = async (data) => {
+  try {
+    const [rows] = await promisePool.execute(
+      "INSERT INTO random_data (name, age) VALUES (?,?)",
+      [data.name, data.age]
+    );
+    console.log("model insert news", rows);
+    return rows.insertId;
+  } catch (e) {
+    console.error("model insert news", e.message);
+  }
+};
+module.exports = { testData, postData };

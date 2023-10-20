@@ -12,6 +12,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useForm, Controller } from "react-hook-form";
+import { register } from "../services/UserApi";
 
 const RegisterForm = (props) => {
   const { formToggle, setFormToggle, navigation } = props;
@@ -29,9 +30,17 @@ const RegisterForm = (props) => {
     },
   });
 
-  const onSubmit = (data) => {
-    // Handle form submission
-    console.log("register", data);
+  const onSubmit = async (data) => {
+    const userData = {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+    };
+    try {
+      const response = await register(userData);
+    } catch (error) {
+      console.error("Registration error: ", error);
+    }
   };
   return (
     <SafeAreaView style={{ height: "100%" }}>
