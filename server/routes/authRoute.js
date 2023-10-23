@@ -2,9 +2,9 @@
 const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator");
-const { register } = require("../controller/authController");
+const { register, login } = require("../controller/authController");
 // login with email and password
-//router.post("/login", login);
+router.post("/login", login);
 // register with full name, email and password
 router.post(
   "/register",
@@ -13,5 +13,7 @@ router.post(
   body("password").matches("(?=.*[A-Z]).{8,}"),
   register
 );
+
+router.post("/login", login);
 
 module.exports = router;

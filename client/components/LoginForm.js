@@ -15,6 +15,7 @@ import {
 } from "./FormComponents";
 import Logo from "../views/Logo";
 import { useForm, Controller } from "react-hook-form";
+import { login } from "../services/UserApi";
 
 const LoginForm = (props) => {
   const { formToggle, setFormToggle, navigation } = props;
@@ -24,16 +25,21 @@ const LoginForm = (props) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
-  const onSubmit = (data) => {
-    const formData = new FormData();
-    //formData.append("name", data.username);
-    //formData.append("age", 29);
-    // Handle form submission
-    navigation.navigate("Home");
+  const onSubmit = async (data) => {
+    console.log("data", data);
+    try {
+      const response = await login(data);
+      console.log("res", response.token, response.status);
+      if (response.status === 200) {
+        console.log(response.user);
+      }
+    } catch (error) {
+      console.error("Login error: ", error);
+    }
   };
   return (
     <SafeAreaView style={{ height: "100%" }}>
@@ -43,19 +49,22 @@ const LoginForm = (props) => {
           control={control}
           render={({ field }) => (
             <FormInput
-              title="Username"
+              title="Email"
               value={field.value}
               onChange={field.onChange}
               secret={false}
             />
           )}
-          name="username"
-          rules={{ required: "Name is required" }}
+          name="email"
+          rules={{
+            required: { value: true, message: "Email is required." },
+            pattern: {
+              value: /\S+@\S+\.\S+$/,
+              message: "Not valid email.",
+            },
+          }}
         />
-        <ErrorMessage
-          error={errors?.username}
-          message={errors?.username?.message}
-        />
+        <ErrorMessage error={errors?.email} message={errors?.email?.message} />
 
         <Controller
           control={control}
@@ -70,24 +79,17 @@ const LoginForm = (props) => {
           )}
           name="password"
           rules={{
-            required: "Password is required",
-            minLength: {
-              value: 8,
-              message: "Password must be at least 8 characters long",
+            required: { value: true, message: "This field cannot be empty" },
+            pattern: {
+              /**
+               *  Password criteria
+               *  Minimum length 8 , atlease 1 digit
+               *  Atleast 1 upper case of lower case character
+               */
+              value: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/,
+              message: "Min 8 characters, uppercase & number",
             },
           }}
-          // rules={{
-          //   required: { value: true, message: "This field cannot be empty" },
-          //   pattern: {
-          //     /**
-          //      *  Password criteria
-          //      *  Minimum length 8 , atlease 1 digit
-          //      *  Atleast 1 upper case of lower case character
-          //      */
-          //     value: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/,
-          //     message: "Min 8 characters, uppercase & number",
-          //   },
-          // }}
         />
         <ErrorMessage
           error={errors?.password}

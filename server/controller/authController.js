@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 const register = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("user_post validation", errors.array());
+    console.error("registration validation", errors.array());
     const err = httpError("data not valid", 400);
     next(err);
     return;
@@ -31,10 +31,28 @@ const register = async (req, res, next) => {
     password: hashedPassword,
   };
   const uid = await addUser(user);
-  console.log(uid);
   res.json({ message: `user added with id: ${uid}`, status: 200 });
 };
 
+const login = (req, res, next) => {
+  passport.authenticate("local", { session: false }, (err, user, info) => {
+    if (err || !user) {
+      next(httpError("email / password incorrect", 400));
+      return;
+    }
+    req.login(user, { session: false }, (err) => {
+      if (err) {
+        next(httpError("login error", 400));
+        return;
+      }
+    });
+
+    // generate a signed son web token with the contents of user object and return it in the response
+    const token = jwt.sign(user, process.env.JWT_SECRET);
+    return res.json({ user: user, token: token, status: 200 });
+  })(req, res, next);
+};
 module.exports = {
   register,
+  login,
 };

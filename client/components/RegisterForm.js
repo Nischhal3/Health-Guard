@@ -37,7 +37,7 @@ const RegisterForm = (props) => {
       password: data.password,
     };
     try {
-      const response = await register(userData);
+      // const response = await register(userData);
     } catch (error) {
       console.error("Registration error: ", error);
     }

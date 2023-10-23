@@ -11,19 +11,10 @@ import temp from "../assets/temp.png";
 import light from "../assets/light.png";
 import Colors from "../utils/Colors";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { register } from "../api/SampleApi";
 
 const RoomInfoBar = ({ title, navigation }) => {
   const handleClick = async () => {
-    const formData = new FormData();
-    formData.append("name", "test");
-    formData.append("age", 19);
-    try {
-      const data = await register(formData);
-    } catch (error) {
-      console.error(error);
-    }
-    //navigation.navigate("SensorDetails");
+    navigation.navigate("SensorDetails");
   };
   return (
     <TouchableOpacity style={styles.container} onPress={handleClick}>

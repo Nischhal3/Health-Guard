@@ -12,7 +12,6 @@ import Settings from "./views/Settings";
 import History from "./views/History";
 import Alerts from "./views/Alerts";
 import { SensorDetails } from "./views/SensorDetails";
-import { fetchData } from "./api/SampleApi";
 
 const Stack = createStackNavigator();
 

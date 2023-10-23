@@ -2,9 +2,10 @@
 const passport = require("passport");
 const Strategy = require("passport-local").Strategy;
 const passportJWT = require("passport-jwt");
+const { userLogin } = require("../model/userModel");
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
-const { getUserLogin } = require("../models/userModel");
+const bcrypt = require("bcrypt");
 
 // local strategy for email and password login
 passport.use(
@@ -16,12 +17,13 @@ passport.use(
     async (username, password, done) => {
       const params = [username];
       try {
-        const [user] = await getUserLogin(params);
-        if (user === undefined /*!user*/) {
-          return done(null, false, { message: "Incorrect email." });
+        const [user] = await userLogin(params);
+        if (user === undefined) {
+          return done(null, false, { message: "Incorrect email or password." });
         }
-        if (user.password !== password) {
-          return done(null, false, { message: "Incorrect password." });
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+          return done(null, false, { message: "Incorrect email or password." });
         }
         delete user.password;
         return done(null, { ...user }, { message: "Logged In Successfully" });

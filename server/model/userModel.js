@@ -18,11 +18,22 @@ const addUser = async (user) => {
       "INSERT INTO user (email, username, password) VALUES (?,?,?)",
       [user.email, user.username, user.password]
     );
-    console.log("model insert user", rows);
     return rows.insertId;
   } catch (e) {
     console.error("Model add user", e.message);
   }
 };
 
-module.exports = { getAllUsers, addUser };
+const userLogin = async (params) => {
+  try {
+    const [rows] = await promisePool.execute(
+      "SELECT * FROM user WHERE email = ?;",
+      params
+    );
+    return rows;
+  } catch (e) {
+    console.log("error", e.message);
+  }
+};
+
+module.exports = { getAllUsers, addUser, userLogin };
