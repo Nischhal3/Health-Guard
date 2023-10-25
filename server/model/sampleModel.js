@@ -3,7 +3,7 @@ const promisePool = pool.promise();
 
 const testData = async () => {
   try {
-    const [rows] = await promisePool.query("SELECT * FROM random_data");
+    const [rows] = await promisePool.query("SELECT * FROM random_table");
     return rows;
   } catch (e) {
     console.error("error", e.message);

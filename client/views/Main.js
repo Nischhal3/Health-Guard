@@ -11,13 +11,13 @@ const Main = ({ navigation }) => {
   return (
     <SafeAreaView style={{ backgroundColor: Colors.primary }}>
       {formToggle ? (
-        <LoginForm
+        <RegisterForm
           formToggle={formToggle}
           setFormToggle={setFormToggle}
           navigation={navigation}
         />
       ) : (
-        <RegisterForm
+        <LoginForm
           formToggle={formToggle}
           setFormToggle={setFormToggle}
           navigation={navigation}
