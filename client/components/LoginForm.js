@@ -1,12 +1,5 @@
-import React from "react";
-import {
-  Button,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { SafeAreaView, View } from "react-native";
 import {
   ErrorMessage,
   FormButton,
@@ -15,10 +8,13 @@ import {
 } from "./FormComponents";
 import Logo from "../views/Logo";
 import { useForm, Controller } from "react-hook-form";
-import { login } from "../services/UserApi";
+import { login, saveUserDataToAsyncStorage } from "../services/UserApi";
+import { MainContext } from "../MainContext";
 
 const LoginForm = (props) => {
   const { formToggle, setFormToggle, navigation } = props;
+  const { setIsLoggedIn } = useContext(MainContext);
+
   const {
     control,
     handleSubmit,
@@ -29,18 +25,25 @@ const LoginForm = (props) => {
       password: "",
     },
   });
+
   const onSubmit = async (data) => {
-    console.log("data", data);
     try {
       const response = await login(data);
-      console.log("res", response.token, response.status);
+
       if (response.status === 200) {
-        console.log(response.user);
+        const userData = {
+          data: response.user,
+          token: response.token,
+        };
+        await saveUserDataToAsyncStorage(userData);
+        setIsLoggedIn(true);
+        navigation.navigate("Home");
       }
     } catch (error) {
       console.error("Login error: ", error);
     }
   };
+
   return (
     <SafeAreaView style={{ height: "100%" }}>
       <Logo />

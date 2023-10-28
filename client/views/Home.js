@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
-  Button,
   Image,
   SafeAreaView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -20,16 +18,22 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { deleteUserDataFromAsyncStorage } from "../services/UserApi";
+import { MainContext } from "../MainContext";
+
 const Home = ({ navigation }) => {
   const navDirection = "Home";
+  const { setIsLoggedIn, user } = useContext(MainContext);
 
-  const handleLogOut = () => {
-    console.log("logout pressed");
+  const handleLogOut = async () => {
+    await deleteUserDataFromAsyncStorage();
+    setIsLoggedIn(false);
+    navigation.navigate("Main");
   };
   const handleSettings = () => {
     navigation.navigate("Settings", { navDirection });
   };
-
+  console.log("Home", user);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
