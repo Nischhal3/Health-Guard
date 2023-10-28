@@ -17,12 +17,21 @@ import {
 import Notification from "../components/Notification";
 const Alerts = ({ navigation }) => {
   // Generate an array of 10 fake sample notifications
-  const notifications = Array.from({ length: 30 }, (_, index) => ({
+  const notifications = Array.from({ length: 10 }, (_, index) => ({
     id: index.toString(),
-    title: `Notification ${index + 1}`,
-    message: `This is a sample notification message. This is a another sample notification message! ${
-      index + 1
-    }`,
+    title:
+      index % 2 === 0
+        ? "Temperature Sensor Notification"
+        : index % 3 === 0
+        ? "Light Sensor Notification"
+        : "Motion Sensor Notification",
+    // title: `Temperature Notificatio ${index + 1}`,
+    message:
+      index % 2 === 0
+        ? "Temperature too low (12 degree) in Living Room"
+        : index % 3 === 0
+        ? "Light Intensity is very low in kitchen"
+        : "No Motion detected in last 2 hours",
   }));
 
   const clearAllNotifications = () => {

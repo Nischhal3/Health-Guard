@@ -38,7 +38,9 @@ const RegisterForm = (props) => {
     };
     try {
       const response = await register(userData);
-      console.log("response", response);
+      if (response.status === 200) {
+        setFormToggle(!formToggle);
+      }
     } catch (error) {
       console.error("Registration error: ", error);
     }

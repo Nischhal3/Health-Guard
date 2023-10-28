@@ -9,7 +9,8 @@ const register = async (userData) => {
     },
     body: JSON.stringify(userData),
   };
-  return await fetch(`${baseUrl}/register`, options);
+  const response = await fetch(`${baseUrl}/register`, options);
+  return await response.json();
 };
 
 const login = async (userData) => {
