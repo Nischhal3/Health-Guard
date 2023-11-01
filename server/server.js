@@ -12,10 +12,7 @@ const socketIo = require("socket.io");
 const server = http.createServer(app);
 const io = socketIo(server);
 const PORT = 3000;
-
-// Dummy data for demonstration
-let backendData = "Initial data";
-let backendData2 = "Test Data";
+const mqtt = require("mqtt");
 
 app.use(cors());
 // use passport autentication
@@ -46,26 +43,37 @@ io.use((socket, next) => {
   });
 });
 
+// Connect to the MQTT broker
+const mqttClient = mqtt.connect("mqtt://localhost:1883");
+// Subscribe to a topic
+const mqttTopic = "test_topic";
+mqttClient.subscribe(mqttTopic, (err) => {
+  if (err) {
+    console.error(`Error subscribing to ${mqttTopic}: ${err}`);
+  } else {
+    console.log(`Subscribed to ${mqttTopic}`);
+  }
+});
+
+let data = { topic: "", message: "" };
 io.on("connection", (socket) => {
   console.log("Client connected");
 
-  // Send initial data to the client
-  socket.emit("data", backendData);
-  socket.emit("data2", backendData2);
+  socket.emit("mqttMessage", data);
+  // Listen for messages on the subscribed topic
+  mqttClient.on("message", (topic, message) => {
+    console.log(`Received message on topic ${topic}: ${message.toString()}`);
 
-  // Simulate a data change every 5 seconds for demonstration
-  setInterval(() => {
-    // Simulate a data change
-    backendData = "Updated data at " + new Date().toLocaleTimeString();
-    backendData2 = "test data" + new Date().toLocaleTimeString();
-
+    data = {
+      topic: topic,
+      message: message.toString(),
+    };
     // Notify all connected clients about the data change through WebSocket
-    io.emit("data", backendData);
-    io.emit("data2", backendData2);
-  }, 5000);
+    io.emit("mqttMessage", data);
 
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
+    socket.on("disconnect", () => {
+      console.log("Client disconnected");
+    });
   });
 });
 
