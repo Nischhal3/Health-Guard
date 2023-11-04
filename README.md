@@ -27,3 +27,18 @@ password VARCHAR(255) NOT NULL
 - check status: sc query mosquitto
 - publish message: "C:\Program Files\mosquitto\mosquitto_pub" -h localhost -t test_topic -m "Hello, MQTT"
 - subscribe message: "C:\Program Files\mosquitto\mosquitto_sub.exe" -h localhost -t test_topic
+
+# MQTT setup In Rasberry Pi 4
+
+- sudo apt-get install python3-pip
+- sudo apt-get install python3-paho-mqtt
+- sudo nano /etc/mosquitto/mosquitto.conf
+- Edit file
+  - listener 1883 0.0.0.0
+  - allow_anonymous false
+  - password_file /etc/mosquitto/passwd
+- Set username and password for MQTT
+  - sudo mosquitto_passwd -c /etc/mosquitto/passwd your_username follwed by password
+- sudo service mosquitto restart
+- sudo service mosquitto enable
+- sudo service mosquitto status [Should be active]
