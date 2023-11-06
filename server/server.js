@@ -12,7 +12,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 const PORT = 3000;
 const { connectToMQTTBroker, subscribeToMQTTTopic } = require("./utils/mqtt");
-const { authenticateSocket, publishMQTTMessages } = require("./utils/socket");
+const { authenticateSocket, handleSocketEvents } = require("./utils/socket");
 
 app.use(cors());
 // use passport autentication
@@ -27,7 +27,10 @@ app.use("/", passport.authenticate("jwt", { session: false }), router);
 io.use(authenticateSocket);
 const mqttClient = connectToMQTTBroker();
 subscribeToMQTTTopic(mqttClient);
-publishMQTTMessages(mqttClient, io);
+// handleSocketEvents(mqttClient, io);
+io.on("connection", (socket) => {
+  handleSocketEvents(socket, io, mqttClient);
+});
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
