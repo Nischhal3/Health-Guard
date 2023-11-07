@@ -13,34 +13,43 @@ const WebSocketComponent = () => {
     const socket = io(baseUrl, {
       auth: { token: user.token },
     });
-
+    // Fetching the data to the server
     socket.on("mqttMessage", (data) => {
       setImageData(data.message);
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
     });
 
     // Clean up the socket connection when the component unmounts
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [user.token]);
 
   const sendDataToServer = () => {
-    console.log("Sending message to server");
     const socket = io(baseUrl, {
       auth: { token: user.token },
     });
 
     // Emit the data to the server
-    socket.emit("data", { message: "test" });
+    socket.emit("app-data", { message: "Message from Health-Guard" });
 
-    socket.disconnect();
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   };
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       {imageData ? (
         <Image
-          style={{ width: 300, height: 200 }}
+          style={{ width: 350, height: 300, borderRadius: 5, margin: 5 }}
           source={{ uri: `data:image/png;base64,${imageData}` }}
         />
       ) : (
@@ -49,14 +58,14 @@ const WebSocketComponent = () => {
       <TouchableOpacity
         onPress={sendDataToServer}
         style={{
-          backgroundColor: "#3498db", // Example background color
+          backgroundColor: "#3498db",
           padding: 10,
           borderRadius: 5,
-          width: 200, // Adjust the width as needed
-          height: 40, // Adjust the height as needed
+          width: 200,
+          height: 40,
           alignItems: "center",
           justifyContent: "center",
-          marginTop: 10, // Optional spacing
+          marginTop: 10,
         }}
       >
         <Text style={{ color: "#fff" }}>Send Data to Server</Text>

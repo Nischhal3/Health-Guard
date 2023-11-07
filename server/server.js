@@ -26,10 +26,11 @@ app.use("/", passport.authenticate("jwt", { session: false }), router);
 
 io.use(authenticateSocket);
 const mqttClient = connectToMQTTBroker();
+mqttClient.setMaxListeners(15);
 subscribeToMQTTTopic(mqttClient);
-// handleSocketEvents(mqttClient, io);
+
 io.on("connection", (socket) => {
-  handleSocketEvents(socket, io, mqttClient);
+  handleSocketEvents(socket, mqttClient);
 });
 
 server.listen(PORT, () => {

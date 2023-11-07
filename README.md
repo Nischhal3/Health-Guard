@@ -23,10 +23,7 @@ password VARCHAR(255) NOT NULL
 
 # Start MQTT
 
-- With Admin privilage run : net start mosquitto
-- check status: sc query mosquitto
-- publish message: "C:\Program Files\mosquitto\mosquitto_pub" -h localhost -t test_topic -m "Hello, MQTT"
-- subscribe message: "C:\Program Files\mosquitto\mosquitto_sub.exe" -h localhost -t test_topic
+- Find running application on port 1883 : netstat -an | findstr "1883"
 
 # MQTT setup In Rasberry Pi 4
 

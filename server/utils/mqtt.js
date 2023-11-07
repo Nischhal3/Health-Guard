@@ -35,7 +35,33 @@ const subscribeToMQTTTopic = (mqttClient) => {
   });
 };
 
+const publishMessageToMQTTClient = (socket, mqttClient) => {
+  // Event listener for MQTT messages
+  mqttClient.on("message", (topic, message) => {
+    console.log(`Received message on topic ${topic}`);
+
+    const data = {
+      topic: topic,
+      message: message.toString(),
+    };
+    // Emit the MQTT message to the connected client
+    socket.emit("mqttMessage", data);
+  });
+};
+
+const publishMessageToMQTTServer = (mqttClient, data, topic) => {
+  mqttClient.publish(topic, JSON.stringify(data), (err) => {
+    if (err) {
+      console.error("Error publishing data:", err);
+    } else {
+      console.log("Data published successfully:", data);
+    }
+  });
+};
+
 module.exports = {
   connectToMQTTBroker,
   subscribeToMQTTTopic,
+  publishMessageToMQTTClient,
+  publishMessageToMQTTServer,
 };
