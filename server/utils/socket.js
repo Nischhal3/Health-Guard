@@ -10,7 +10,7 @@ const authenticateSocket = (socket, next) => {
   const token = socket.handshake.auth.token;
   if (!token) {
     return next(new Error("Authentication failed. No token provided."));
-  }
+  }  
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
@@ -24,11 +24,11 @@ const authenticateSocket = (socket, next) => {
 
 const handleSocketEvents = (socket, mqttClient) => {
   // Event listener for receiving client data
-  socket.on("app-data", (data) => {
-    console.log("Received data from client:", data.message);
-    // Event listener for publishing client data to MQTT in PI
-    publishMessageToMQTTServer(mqttClient, data, "healthGuard");
-  });
+  // socket.on("app-data", (data) => {
+  //   console.log("Received data from client:", data.message);
+  //   // Event listener for publishing client data to MQTT in PI
+  //   publishMessageToMQTTServer(mqttClient, data, "healthGuard");
+  // });
   // Event listener for publishing data to client [Front-end]
   publishMessageToMQTTClient(socket, mqttClient);
 

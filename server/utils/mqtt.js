@@ -3,11 +3,14 @@ require("dotenv").config();
 const mqtt = require("mqtt");
 
 const connectToMQTTBroker = () => {
+  console.log("connecting to mosquitto broker...");
   const mqttClient = mqtt.connect(process.env.mqttBrokerAddress, {
-    username: process.env.mqttUsername,
-    password: process.env.mqttPassword,
+    clientId: "testNode",
+    protocolId: "MQIsdp",
+    protocolVersion: 3,
+    connectTimeout: 1000,
+    debug: true,
   });
-
   mqttClient.on("connect", () => {
     console.log("Connected to MQTT broker");
   });
@@ -34,28 +37,17 @@ const subscribeToMQTTTopic = (mqttClient) => {
     }
   });
 };
-
-const publishMessageToMQTTClient = (socket, mqttClient) => {
+const publishMessageToMQTTClient = async (socket, mqttClient) => {
   // Event listener for MQTT messages
   mqttClient.on("message", (topic, message) => {
     console.log(`Received message on topic ${topic}`);
-
     const data = {
       topic: topic,
       message: message.toString(),
     };
     // Emit the MQTT message to the connected client
-    socket.emit("mqttMessage", data);
-  });
-};
-
-const publishMessageToMQTTServer = (mqttClient, data, topic) => {
-  mqttClient.publish(topic, JSON.stringify(data), (err) => {
-    if (err) {
-      console.error("Error publishing data:", err);
-    } else {
-      console.log("Data published successfully:", data);
-    }
+    console.log(data);
+    socket.emit("tempData", data);
   });
 };
 
@@ -63,5 +55,4 @@ module.exports = {
   connectToMQTTBroker,
   subscribeToMQTTTopic,
   publishMessageToMQTTClient,
-  publishMessageToMQTTServer,
 };

@@ -11,7 +11,11 @@ const socketIo = require("socket.io");
 const server = http.createServer(app);
 const io = socketIo(server);
 const PORT = 3000;
-const { connectToMQTTBroker, subscribeToMQTTTopic } = require("./utils/mqtt");
+const {
+  connectToMQTTBroker,
+  subscribeToMQTTTopic,
+  publishMessageToMQTTClient,
+} = require("./utils/mqtt");
 const { authenticateSocket, handleSocketEvents } = require("./utils/socket");
 
 app.use(cors());
@@ -25,12 +29,13 @@ app.use("/auth", authRoute);
 app.use("/", passport.authenticate("jwt", { session: false }), router);
 
 io.use(authenticateSocket);
+
 const mqttClient = connectToMQTTBroker();
 mqttClient.setMaxListeners(15);
 subscribeToMQTTTopic(mqttClient);
-
 io.on("connection", (socket) => {
-  handleSocketEvents(socket, mqttClient);
+  console.log("socket connected...");
+  handleSocketEvents(socket, mqttClient);  
 });
 
 server.listen(PORT, () => {

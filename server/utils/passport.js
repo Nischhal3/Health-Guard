@@ -16,6 +16,7 @@ passport.use(
     },
     async (username, password, done) => {
       const params = [username];
+      console.log(username)
       try {
         const [user] = await userLogin(params);
         if (user === undefined) {
