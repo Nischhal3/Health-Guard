@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -13,16 +13,40 @@ import SensorData from "../components/SensorData";
 import sunIcon from "../assets/sun.png";
 import runningIcon from "../assets/running.png";
 import humidityIcon from "../assets/humidity.png";
+import { MainContext } from "../MainContext";
+import io from "socket.io-client";
+import { baseUrl } from "../utils/Variables";
 
 export const SensorDetails = ({ navigation }) => {
-  const [temp, setTemp] = useState(18);
+  const [temp, setTemp] = useState(0);
   // temp default value to be replaced by sensor temp value
   const minTemp = 15;
   const maxTemp = 32;
   const progressBarMinValue = 1;
   const progressBarMaxValue = 100;
   const [convertedValue, setConvertedValue] = useState(0);
+  const { user } = useContext(MainContext);
 
+  useEffect(() => {
+    const socket = io(baseUrl, {
+      auth: { token: user.token },
+    });
+    // Fetching the data to the server
+    socket.on("tempData", (data) => {
+      // setImageData(data.message);
+      setTemp(data);
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    // Clean up the socket connection when the component unmounts
+    return () => {
+      socket.disconnect();
+    };
+  }, [user.token]);
+  console.log(temp);
   useEffect(() => {
     setConvertedValue(
       convertTempValueToBarRange(
@@ -70,7 +94,7 @@ export const SensorDetails = ({ navigation }) => {
             //style={styles.circle}
             //dashedBackground={{ width: 20, gap: 10 }}
           />
-          <Text style={styles.temp}>{`${temp} °C`}</Text>
+          <Text style={styles.temp}>{`${temp.message} °C`}</Text>
         </View>
         <Text style={styles.tempText}>Temperature</Text>
         <View style={styles.btnContainer}>

@@ -38,6 +38,7 @@ const RegisterForm = (props) => {
     };
     try {
       const response = await register(userData);
+      console.log(response);
       if (response.status === 200) {
         setFormToggle(!formToggle);
       }

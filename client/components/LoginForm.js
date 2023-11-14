@@ -29,6 +29,7 @@ const LoginForm = (props) => {
   const onSubmit = async (data) => {
     try {
       const response = await login(data);
+      console.log(data);
 
       if (response.status === 200) {
         const userData = {
