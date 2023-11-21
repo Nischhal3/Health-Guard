@@ -39,11 +39,11 @@ const publishMessageToMQTTClient = (socket, mqttClient) => {
   // Event listener for MQTT messages
   mqttClient.on("message", (topic, message) => {
     console.log(`Received message on topic ${topic}`);
-
     const data = {
       topic: topic,
       message: message.toString(),
     };
+    console.log("data", data);
     // Emit the MQTT message to the connected client
     socket.emit("mqttMessage", data);
   });

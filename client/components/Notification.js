@@ -3,20 +3,30 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Colors from "../utils/Colors";
 import deleteIcon from "../assets/delete.png";
 
-const Notification = (props) => {
+const Notification = ({ notification }) => {
   const handleDelete = () => {
     console.log("Delet button pressed");
   };
+  console.log(notification);
+  const date = new Date(notification.date);
+
+  const formattedTime = date.toLocaleTimeString();
+  const formattedDate = date.toLocaleDateString();
+
+  console.log("Formatted Time:", formattedTime);
+  console.log("Formatted Date:", formattedDate);
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>{props.title}</Text>
+        <Text style={styles.title}>
+          {notification.type} Sensor Alert {formattedTime}
+        </Text>
         <TouchableOpacity onPress={handleDelete}>
           <Image style={styles.deleteIcon} source={deleteIcon} />
         </TouchableOpacity>
       </View>
       <View style={styles.messageContainer}>
-        <Text style={styles.message}>{props.message}</Text>
+        <Text style={styles.message}>{notification.warning}</Text>
       </View>
     </View>
   );
@@ -39,7 +49,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginTop: 5,
     fontSize: 18,
-    textDecorationLine: "underline",
   },
   deleteIcon: {
     margin: 10,

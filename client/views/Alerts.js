@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FlatList,
   SafeAreaView,
@@ -15,42 +15,53 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Notification from "../components/Notification";
+import { MainContext } from "../MainContext";
+import { getAllNotification } from "../services/NotificationApi";
+
 const Alerts = ({ navigation }) => {
-  // Generate an array of 10 fake sample notifications
-  const notifications = Array.from({ length: 10 }, (_, index) => ({
-    id: index.toString(),
-    title:
-      index % 2 === 0
-        ? "Temperature Sensor Notification"
-        : index % 3 === 0
-        ? "Light Sensor Notification"
-        : "Motion Sensor Notification",
-    // title: `Temperature Notificatio ${index + 1}`,
-    message:
-      index % 2 === 0
-        ? "Temperature too low (12 degree) in Living Room"
-        : index % 3 === 0
-        ? "Light Intensity is very low in kitchen"
-        : "No Motion detected in last 2 hours",
-  }));
+  const { user } = useContext(MainContext);
+  const [notifications, setNotifications] = useState([]);
+
+  const fetchNotifications = async () => {
+    try {
+      const token = user.token;
+      console.log(token);
+      if (token) {
+        const response = await getAllNotification(token);
+        const notificationsData = await response.json();
+        setNotifications(notificationsData);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    // Fetch notifications every 1 minute
+    const intervalId = setInterval(fetchNotifications, 60000);
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, [user]);
 
   const clearAllNotifications = () => {
     console.log("clear notifications");
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <Headers navDirection="Alerts" navigation={navigation} />
       <Text style={styles.notificationText}>Notifications</Text>
       <View style={styles.notificationContainer}>
-        <FlatList
-          data={notifications}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ScrollView>
-              <Notification title={item.title} message={item.message} />
-            </ScrollView>
-          )}
-        />
+        {notifications.length > 0 && (
+          <FlatList
+            data={notifications}
+            keyExtractor={(notification) => notification.sensor_id.toString()} // Convert to string
+            renderItem={({ item: notification }) => (
+              <Notification notification={notification} />
+            )}
+          />
+        )}
       </View>
       <TouchableOpacity onPress={clearAllNotifications}>
         <Text style={styles.clearText}>Clear All Notification</Text>

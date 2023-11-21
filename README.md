@@ -21,6 +21,17 @@ email VARCHAR(255) UNIQUE NOT NULL,
 password VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE notification (
+id INT AUTO_INCREMENT PRIMARY KEY,
+date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+location VARCHAR(255),
+sensor_reading VARCHAR(255),
+type VARCHAR(255),
+warning TEXT,
+userId INT,
+FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE,
+);
+
 # Start MQTT
 
 - Find running application on port 1883 : netstat -an | findstr "1883"

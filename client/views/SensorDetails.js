@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -13,15 +13,21 @@ import SensorData from "../components/SensorData";
 import sunIcon from "../assets/sun.png";
 import runningIcon from "../assets/running.png";
 import humidityIcon from "../assets/humidity.png";
+import { MainContext } from "../MainContext";
+import { baseUrl } from "../utils/Variables";
+import { io } from "socket.io-client";
 
 export const SensorDetails = ({ navigation }) => {
-  const [temp, setTemp] = useState(18);
   // temp default value to be replaced by sensor temp value
+  const [temp, setTemp] = useState(18);
+  const { user } = useContext(MainContext);
+  const [sensorData, setSensorData] = useState("");
+  const [convertedValue, setConvertedValue] = useState(0);
+
   const minTemp = 15;
   const maxTemp = 32;
   const progressBarMinValue = 1;
   const progressBarMaxValue = 100;
-  const [convertedValue, setConvertedValue] = useState(0);
 
   useEffect(() => {
     setConvertedValue(
@@ -34,6 +40,29 @@ export const SensorDetails = ({ navigation }) => {
       )
     );
   }, [temp]);
+
+  useEffect(() => {
+    const socket = io(baseUrl, {
+      auth: { token: user.token },
+    });
+    // Fetching the data to the server
+    socket.on("mqttMessage", (data) => {
+      const parsedData = JSON.parse(data.message);
+      const { sensor_reading, location, name, sensor_type } = parsedData;
+      console.log("hello", sensor_reading, location, sensor_type);
+
+      setSensorData(parsedData);
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    // Clean up the socket connection when the component unmounts
+    return () => {
+      socket.disconnect();
+    };
+  }, [user.token]);
 
   const increaseTemp = () => {
     if (temp === 32) {
