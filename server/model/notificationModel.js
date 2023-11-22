@@ -21,4 +21,31 @@ const postNotification = async (data) => {
     console.error("Model postNotification news", e.message);
   }
 };
-module.exports = { getAllNotification, postNotification };
+
+const deleteNotificationById = async (notificationId) => {
+  try {
+    const [rows] = await promisePool.execute(
+      "DELETE FROM notification WHERE sensor_id = ?",
+      [notificationId]
+    );
+    return rows.affectedRows;
+  } catch (e) {
+    console.error("Model deleteNotificationById error", e.message);
+  }
+};
+
+const deleteAllNotification = async () => {
+  try {
+    const [result] = await promisePool.execute("DELETE FROM notification");
+    return result.affectedRows; // or simply return result
+  } catch (e) {
+    console.error("Model deleteAllNotification error", e.message);
+  }
+};
+
+module.exports = {
+  getAllNotification,
+  postNotification,
+  deleteNotificationById,
+  deleteAllNotification,
+};

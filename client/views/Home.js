@@ -33,7 +33,7 @@ const Home = ({ navigation }) => {
   const handleSettings = () => {
     navigation.navigate("Settings", { navDirection });
   };
-  // console.log("Home", user);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>

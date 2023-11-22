@@ -3,7 +3,7 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import backButton from "../assets/backButton.png";
 import settings from "../assets/settings.png";
 
-const Headers = ({ navigation, navDirection }) => {
+const Headers = ({ navigation, navDirection, showIcon = true }) => {
   const handlebackButton = () => {
     if (navDirection === "SensorDetails") {
       navigation.navigate("Rooms");
@@ -20,7 +20,10 @@ const Headers = ({ navigation, navDirection }) => {
       <TouchableOpacity style={{ marginLeft: 10 }} onPress={handlebackButton}>
         <Image source={backButton} />
       </TouchableOpacity>
-      <TouchableOpacity style={{ marginRight: 10 }} onPress={handleSettings}>
+      <TouchableOpacity
+        style={{ marginRight: 10, opacity: showIcon ? 1 : 0 }}
+        onPress={handleSettings}
+      >
         <Image source={settings} />
       </TouchableOpacity>
     </View>

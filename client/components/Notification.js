@@ -1,20 +1,51 @@
-import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useContext } from "react";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Colors from "../utils/Colors";
 import deleteIcon from "../assets/delete.png";
+import { MainContext } from "../MainContext";
+import { deleteNotificationById } from "../services/NotificationApi";
+import { showToast } from "../utils/Variables";
+import ToastContainer from "react-native-toast-message";
 
 const Notification = ({ notification }) => {
+  const { user, handleChange, setHandleChange } = useContext(MainContext);
   const handleDelete = () => {
-    console.log("Delet button pressed");
+    Alert.alert(
+      "Delete Notification",
+      "Are you sure you want to delete this notification?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            const response = await deleteNotificationById(
+              notification.sensor_id,
+              user.token
+            );
+            const deleteNotification = await response.json();
+            if (deleteNotification.status === 200) {
+              setHandleChange(!handleChange);
+              showToast("success", deleteNotification.message);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
-  console.log(notification);
   const date = new Date(notification.date);
-
   const formattedTime = date.toLocaleTimeString();
-  const formattedDate = date.toLocaleDateString();
 
-  console.log("Formatted Time:", formattedTime);
-  console.log("Formatted Date:", formattedDate);
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -28,6 +59,7 @@ const Notification = ({ notification }) => {
       <View style={styles.messageContainer}>
         <Text style={styles.message}>{notification.warning}</Text>
       </View>
+      <ToastContainer />
     </View>
   );
 };

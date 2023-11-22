@@ -3,6 +3,8 @@
 const {
   postNotification,
   getAllNotification,
+  deleteNotificationById,
+  deleteAllNotification,
 } = require("../model/notificationModel");
 const { validationResult } = require("express-validator");
 const { httpError } = require("../utils/errors");
@@ -29,4 +31,53 @@ const post_notification = async (req, res, next) => {
   res.json({ message: `${id}`, status: 200 });
 };
 
-module.exports = { get_all_notification, post_notification };
+const delete_notification = async (req, res, next) => {
+  try {
+    const notificationId = req.params.id;
+    const deletedRowCount = await deleteNotificationById(notificationId);
+
+    if (deletedRowCount > 0) {
+      res.json({
+        message: `Notification with ID ${notificationId} deleted successfully`,
+        status: 200,
+      });
+    } else {
+      const err = httpError(
+        `Notification with ID ${notificationId} not found`,
+        404
+      );
+      next(err);
+    }
+  } catch (error) {
+    console.error("Delete notification controller error", error.message);
+    const err = httpError("Internal Server Error", 500);
+    next(err);
+  }
+};
+
+const delete_all_notification = async (req, res, next) => {
+  try {
+    const deletedRowCount = await deleteAllNotification();
+
+    if (deletedRowCount > 0) {
+      res.json({
+        message: `${deletedRowCount} notifications deleted successfully`,
+        status: 200,
+      });
+    } else {
+      const err = httpError("No notifications found to delete", 404);
+      next(err);
+    }
+  } catch (error) {
+    console.error("Delete all notification controller error", error.message);
+    const err = httpError("Internal Server Error", 500);
+    next(err);
+  }
+};
+
+module.exports = {
+  get_all_notification,
+  post_notification,
+  delete_notification,
+  delete_all_notification,
+};
