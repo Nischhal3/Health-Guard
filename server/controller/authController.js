@@ -37,13 +37,18 @@ const register = async (req, res, next) => {
 const login = (req, res, next) => {
   passport.authenticate("local", { session: false }, (err, user, info) => {
     if (err || !user) {
-      next(httpError("email / password incorrect", 400));
-      return;
+      return res.status(400).json({
+        message: "Invalid email or password",
+        status: 400,
+      });
     }
+
     req.login(user, { session: false }, (err) => {
       if (err) {
-        next(httpError("login error", 400));
-        return;
+        return res.status(400).json({
+          message: "Login error",
+          status: 400,
+        });
       }
     });
 

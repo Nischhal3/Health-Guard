@@ -10,6 +10,8 @@ import Logo from "../views/Logo";
 import { useForm, Controller } from "react-hook-form";
 import { login, saveUserDataToAsyncStorage } from "../services/UserApi";
 import { MainContext } from "../MainContext";
+import ToastContainer from "react-native-toast-message";
+import { showToast } from "../utils/Variables";
 
 const LoginForm = (props) => {
   const { formToggle, setFormToggle, navigation } = props;
@@ -29,7 +31,6 @@ const LoginForm = (props) => {
   const onSubmit = async (data) => {
     try {
       const response = await login(data);
-
       if (response.status === 200) {
         const userData = {
           data: response.user,
@@ -38,6 +39,8 @@ const LoginForm = (props) => {
         await saveUserDataToAsyncStorage(userData);
         setIsLoggedIn(true);
         navigation.navigate("Home");
+      } else {
+        showToast("success", response.message);
       }
     } catch (error) {
       console.error("Login error: ", error);
@@ -106,6 +109,7 @@ const LoginForm = (props) => {
         formToggle={formToggle}
         setFormToggle={setFormToggle}
       />
+      <ToastContainer />
     </SafeAreaView>
   );
 };
