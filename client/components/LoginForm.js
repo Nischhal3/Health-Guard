@@ -36,6 +36,7 @@ const LoginForm = (props) => {
           data: response.user,
           token: response.token,
         };
+        console.log(userData);
         await saveUserDataToAsyncStorage(userData);
         setIsLoggedIn(true);
         navigation.navigate("Home");

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -10,6 +10,8 @@ import {
 import Colors from "../utils/Colors";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import RadioGroup, { RadioButton } from "react-native-radio-buttons-group";
+import { MainContext } from "../MainContext";
+import { postNotification } from "../services/NotificationApi";
 
 // Hard coded data to be changed later
 const radioButtonsData = [
@@ -31,12 +33,23 @@ const radioButtonsData = [
 ];
 
 const SensorData = (props) => {
-  // Set default value to radio button
   const [radioButton, setRadioButton] = useState(radioButtonsData[0].id);
+  const { user } = useContext(MainContext);
+  console.log(user.data.id);
 
-  function onPressRadioButton(pickedButton) {
-    setRadioButton(pickedButton);
-  }
+  const data = {
+    location: "Bed Room",
+    sensor_reading: "22",
+    type: "Humidity",
+    userId: user.data.id,
+    warning: "Too dry",
+  };
+
+  const onPressRadioButton = async (pickedButton) => {
+    // setRadioButton(pickedButton);
+    const response = await postNotification(user.token, data);
+  };
+
   console.log("picked button", radioButton);
   return (
     <View style={styles.container}>

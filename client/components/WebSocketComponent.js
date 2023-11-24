@@ -8,7 +8,6 @@ import { baseUrl } from "../utils/Variables";
 const WebSocketComponent = () => {
   const [imageData, setImageData] = useState(null);
   const { user } = useContext(MainContext);
-
   useEffect(() => {
     const socket = io(baseUrl, {
       auth: { token: user.token },

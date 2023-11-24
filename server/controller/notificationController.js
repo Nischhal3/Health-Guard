@@ -19,6 +19,8 @@ const get_all_notification = async (req, res) => {
 };
 
 const post_notification = async (req, res, next) => {
+  const data = req.body;
+  console.log(data);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.error("Notificartion validation", errors.array());
@@ -26,7 +28,7 @@ const post_notification = async (req, res, next) => {
     next(err);
     return;
   }
-  const data = req.body;
+
   const id = await postNotification(data);
   res.json({ message: `${id}`, status: 200 });
 };
