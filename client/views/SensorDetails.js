@@ -16,39 +16,38 @@ import humidityIcon from "../assets/humidity.png";
 import { MainContext } from "../MainContext";
 import { baseUrl } from "../utils/Variables";
 import { io } from "socket.io-client";
-import {
-  getAllNotification,
-  postNotification,
-} from "../services/NotificationApi";
+import { postNotification } from "../services/NotificationApi";
 
 export const SensorDetails = ({ navigation, route }) => {
-  const [temp, setTemp] = useState(0);
-  const [humidity, setHumidty] = useState(0);
   const { user } = useContext(MainContext);
-  const [tempData, setTempData] = useState("");
   const [convertedValue, setConvertedValue] = useState(0);
-  const { roomLocation } = route.params;
-
+  const { data } = route.params;
+  const [temp, setTemp] = useState(0);
   const minTemp = 15;
   const maxTemp = 32;
   const progressBarMinValue = 1;
   const progressBarMaxValue = 100;
+
+  useEffect(() => {
+    setTemp(data.temperature);
+  }, [data]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (tempData.temperature < 15 || tempData.temperature > 23) {
+        if (temp < 15 || temp > 23) {
           let warning;
-          if (tempData.temperature > 23) {
+          if (temp > 23) {
             warning = "Too Hot";
-          } else if (tempData.temperature < 15 && tempData.temperature > 8) {
+          } else if (temp < 15 && temp > 8) {
             warning = "Too Cold";
-          } else if (tempData.temperature <= 7) {
+          } else if (temp <= 7) {
             warning = `It's Freezing`;
           }
           const data = {
-            location: tempData.location,
-            sensor_reading: tempData.temperature,
-            type: tempData.sensor,
+            location: data.location,
+            sensor_reading: temp,
+            type: data.sensor,
             userId: user.data.id,
             warning: warning,
           };
@@ -58,7 +57,7 @@ export const SensorDetails = ({ navigation, route }) => {
         console.error("Error posting data:", error);
       }
     };
-    // Set up an interval to fetch data every 3 seconds
+    // Set up an interval to fetch data every 30 minutes
     const intervalId = setInterval(() => {
       fetchData();
     }, 1800000);
@@ -78,33 +77,6 @@ export const SensorDetails = ({ navigation, route }) => {
       )
     );
   }, [temp]);
-
-  useEffect(() => {
-    const socket = io(baseUrl, {
-      auth: { token: user.token },
-    });
-
-    socket.on("mqttMessage", (data) => {
-      if (
-        data.sensorType === "temperature" &&
-        data.message.location === roomLocation
-      ) {
-        console.log(`Received temperature data: from ${data.message.location}`);
-        setTemp(data.message.temperature);
-        setHumidty(data.message.humidity);
-        setTempData(data.message);
-      }
-    });
-
-    socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-    });
-
-    // Clean up the socket connection when the component unmounts
-    return () => {
-      socket.disconnect();
-    };
-  }, [user.token]);
 
   const increaseTemp = () => {
     if (temp === 32) {
@@ -129,7 +101,7 @@ export const SensorDetails = ({ navigation, route }) => {
     // Emit the data to the server
     socket.emit("tempData", {
       temperature: temp,
-      location: roomLocation,
+      location: "location",
       action: action,
     });
 
@@ -184,7 +156,7 @@ export const SensorDetails = ({ navigation, route }) => {
           imageIcon={humidityIcon}
           size={30}
           height={30}
-          data={tempData}
+          data={data}
         />
         <SensorData imageIcon={runningIcon} size={30} height={35} />
       </View>
