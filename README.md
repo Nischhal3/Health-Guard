@@ -32,6 +32,13 @@ userId INT,
 FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE,
 );
 
+# Command is used to activate a virtual environment
+
+- python3 -m venv path/to/venv
+- source path/to/venv/bin/activate
+- pip install Adafruit-DHT
+- pip install paho-mqtt
+
 # Start MQTT
 
 - Find running application on port 1883 : netstat -an | findstr "1883"

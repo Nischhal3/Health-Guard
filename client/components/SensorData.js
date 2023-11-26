@@ -33,30 +33,27 @@ const radioButtonsData = [
 ];
 
 const SensorData = (props) => {
+  const { imageIcon, size, height, data } = props;
   const [radioButton, setRadioButton] = useState(radioButtonsData[0].id);
   const { user } = useContext(MainContext);
-  console.log(user.data.id);
-
-  const data = {
-    location: "Bed Room",
-    sensor_reading: "22",
-    type: "Humidity",
-    userId: user.data.id,
-    warning: "Too dry",
-  };
 
   const onPressRadioButton = async (pickedButton) => {
     // setRadioButton(pickedButton);
     const response = await postNotification(user.token, data);
   };
+  useEffect(() => {
+    if (data?.sensor === "temperature") {
+      setRadioButton(
+        data.humidity < 30 ? "1" : data.humidity <= 60 ? "2" : "3"
+      );
+    } else {
+      console.log("Block for other sensor values");
+    }
+  }, [data]);
 
-  console.log("picked button", radioButton);
   return (
     <View style={styles.container}>
-      <Image
-        source={props.imageIcon}
-        style={{ width: props.size, height: props.height }}
-      />
+      <Image source={props.imageIcon} style={{ width: size, height: height }} />
       <RadioGroup
         radioButtons={radioButtonsData}
         onPress={onPressRadioButton}

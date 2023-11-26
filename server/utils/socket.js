@@ -24,10 +24,9 @@ const authenticateSocket = (socket, next) => {
 
 const handleSocketEvents = (socket, mqttClient) => {
   // Event listener for receiving client data
-  socket.on("app-data", (data) => {
-    console.log("Received data from client:", data.message);
+  socket.on("tempData", (data) => {
     // Event listener for publishing client data to MQTT in PI
-    publishMessageToMQTTServer(mqttClient, data, "healthGuard");
+    publishMessageToMQTTServer(mqttClient, data, "temp_data");
   });
   // Event listener for publishing data to client [Front-end]
   publishMessageToMQTTClient(socket, mqttClient);

@@ -11,10 +11,26 @@ const Rooms = ({ navigation }) => {
       <View style={styles.roomContainer}>
         <Text style={styles.text}>Your Rooms</Text>
         <ScrollView>
-          <RoomInfoBar title="Living Room" navigation={navigation} />
-          <RoomInfoBar title="Bed Room" navigation={navigation} />
-          <RoomInfoBar title="Kitchen Room" navigation={navigation} />
-          <RoomInfoBar title="Bath Room" navigation={navigation} />
+          <RoomInfoBar
+            title="Living Room"
+            navigation={navigation}
+            roomLocation="living_room"
+          />
+          <RoomInfoBar
+            title="Bed Room"
+            navigation={navigation}
+            roomLocation="bed_room"
+          />
+          <RoomInfoBar
+            title="Kitchen Room"
+            navigation={navigation}
+            roomLocation="kitchen"
+          />
+          <RoomInfoBar
+            title="Bath Room"
+            navigation={navigation}
+            roomLocation="bath_room"
+          />
         </ScrollView>
       </View>
     </SafeAreaView>

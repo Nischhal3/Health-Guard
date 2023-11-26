@@ -65,7 +65,11 @@ const Home = ({ navigation }) => {
       <Logo />
       <HomeButton title="Rooms" icon={HomeIcon} navigation={navigation} />
       <HomeButton title="Alerts" icon={AlertIcon} navigation={navigation} />
-      <HomeButton title="History" icon={HistroyIcon} navigation={navigation} />
+      <HomeButton
+        title="View Camera"
+        icon={HistroyIcon}
+        navigation={navigation}
+      />
     </SafeAreaView>
   );
 };

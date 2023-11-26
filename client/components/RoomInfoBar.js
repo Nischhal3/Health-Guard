@@ -12,9 +12,9 @@ import light from "../assets/light.png";
 import Colors from "../utils/Colors";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
-const RoomInfoBar = ({ title, navigation }) => {
+const RoomInfoBar = ({ title, navigation, roomLocation }) => {
   const handleClick = async () => {
-    navigation.navigate("SensorDetails");
+    navigation.navigate("SensorDetails", { roomLocation });
   };
   return (
     <TouchableOpacity style={styles.container} onPress={handleClick}>

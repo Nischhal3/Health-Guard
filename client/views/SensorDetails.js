@@ -17,12 +17,13 @@ import { MainContext } from "../MainContext";
 import { baseUrl } from "../utils/Variables";
 import { io } from "socket.io-client";
 
-export const SensorDetails = ({ navigation }) => {
-  // temp default value to be replaced by sensor temp value
-  const [temp, setTemp] = useState(18);
+export const SensorDetails = ({ navigation, route }) => {
+  const [temp, setTemp] = useState(0);
+  const [humidity, setHumidty] = useState(0);
   const { user } = useContext(MainContext);
-  const [sensorData, setSensorData] = useState("");
+  const [tempData, setTempData] = useState("");
   const [convertedValue, setConvertedValue] = useState(0);
+  const { roomLocation } = route.params;
 
   const minTemp = 15;
   const maxTemp = 32;
@@ -45,13 +46,17 @@ export const SensorDetails = ({ navigation }) => {
     const socket = io(baseUrl, {
       auth: { token: user.token },
     });
-    // Fetching the data to the server
-    socket.on("mqttMessage", (data) => {
-      const parsedData = JSON.parse(data.message);
-      const { sensor_reading, location, name, sensor_type } = parsedData;
-      console.log("hello", sensor_reading, location, sensor_type);
 
-      setSensorData(parsedData);
+    socket.on("mqttMessage", (data) => {
+      if (
+        data.sensorType === "temperature" &&
+        data.message.location === roomLocation
+      ) {
+        console.log(`Received temperature data: from ${data.message.location}`);
+        setTemp(data.message.temperature);
+        setHumidty(data.message.humidity);
+        setTempData(data.message);
+      }
     });
 
     socket.on("connect_error", (error) => {
@@ -69,12 +74,35 @@ export const SensorDetails = ({ navigation }) => {
       return;
     }
     setTemp(temp + 1);
+    sendDataToServer("increase");
   };
   const decreaseTemp = () => {
     if (temp < 16) {
       return;
     }
     setTemp(temp - 1);
+    sendDataToServer("decrease");
+  };
+
+  const sendDataToServer = (action) => {
+    const socket = io(baseUrl, {
+      auth: { token: user.token },
+    });
+
+    // Emit the data to the server
+    socket.emit("tempData", {
+      temperature: temp,
+      location: roomLocation,
+      action: action,
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   };
 
   return (
@@ -96,8 +124,6 @@ export const SensorDetails = ({ navigation }) => {
             }
             arcSweepAngle={260}
             backgroundColor={Colors.secondary}
-            //style={styles.circle}
-            //dashedBackground={{ width: 20, gap: 10 }}
           />
           <Text style={styles.temp}>{`${temp} °C`}</Text>
         </View>
@@ -117,7 +143,12 @@ export const SensorDetails = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <SensorData imageIcon={sunIcon} size={30} height={30} />
-        <SensorData imageIcon={humidityIcon} size={30} height={30} />
+        <SensorData
+          imageIcon={humidityIcon}
+          size={30}
+          height={30}
+          data={tempData}
+        />
         <SensorData imageIcon={runningIcon} size={30} height={35} />
       </View>
     </SafeAreaView>
