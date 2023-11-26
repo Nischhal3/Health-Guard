@@ -8,8 +8,6 @@ import { baseUrl } from "../utils/Variables";
 const WebSocketComponent = () => {
   const [imageData, setImageData] = useState(null);
   const [systemInfo, setSystemInfo] = useState(null);
-  const { user } = useContext(MainContext);
-
   useEffect(() => {
     const socket = io(baseUrl, {
       auth: { token: user.token },
@@ -34,7 +32,7 @@ const WebSocketComponent = () => {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      {imageData ? (
+      {/* {imageData ? (
         <Image
           style={{ width: 350, height: 300, borderRadius: 5, margin: 5 }}
           source={{ uri: `data:image/png;base64,${imageData.image_url}` }}
@@ -51,7 +49,6 @@ const WebSocketComponent = () => {
           <Text>System temperature: {systemInfo.Temperature}</Text>
         </View>
       )}
-    </View>
   );
 };
 
