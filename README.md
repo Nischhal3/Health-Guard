@@ -38,6 +38,9 @@ FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE,
 - source path/to/venv/bin/activate
 - pip install Adafruit-DHT
 - pip install paho-mqtt
+- pip install adafruit-blinka
+- pip install Pillow
+- pip install adafruit-circuitpython-ssd1306
 
 # Start MQTT
 

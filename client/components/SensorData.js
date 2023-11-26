@@ -34,7 +34,7 @@ const radioButtonsData = [
 
 const SensorData = (props) => {
   const { imageIcon, size, height, data } = props;
-  const [radioButton, setRadioButton] = useState(radioButtonsData[0].id);
+  const [radioButton, setRadioButton] = useState(radioButtonsData[1].id);
   const { user } = useContext(MainContext);
 
   const onPressRadioButton = async (pickedButton) => {
@@ -47,7 +47,7 @@ const SensorData = (props) => {
         data.humidity < 30 ? "1" : data.humidity <= 60 ? "2" : "3"
       );
     } else {
-      console.log("Block for other sensor values");
+      // Block for other sensor values
     }
   }, [data]);
 
