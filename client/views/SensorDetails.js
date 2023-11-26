@@ -16,6 +16,10 @@ import humidityIcon from "../assets/humidity.png";
 import { MainContext } from "../MainContext";
 import { baseUrl } from "../utils/Variables";
 import { io } from "socket.io-client";
+import {
+  getAllNotification,
+  postNotification,
+} from "../services/NotificationApi";
 
 export const SensorDetails = ({ navigation, route }) => {
   const [temp, setTemp] = useState(0);
@@ -29,6 +33,39 @@ export const SensorDetails = ({ navigation, route }) => {
   const maxTemp = 32;
   const progressBarMinValue = 1;
   const progressBarMaxValue = 100;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (tempData.temperature < 15 || tempData.temperature > 23) {
+          let warning;
+          if (tempData.temperature > 23) {
+            warning = "Too Hot";
+          } else if (tempData.temperature < 15 && tempData.temperature > 8) {
+            warning = "Too Cold";
+          } else if (tempData.temperature <= 7) {
+            warning = `It's Freezing`;
+          }
+          const data = {
+            location: tempData.location,
+            sensor_reading: tempData.temperature,
+            type: tempData.sensor,
+            userId: user.data.id,
+            warning: warning,
+          };
+          await postNotification(user.token, data);
+        }
+      } catch (error) {
+        console.error("Error posting data:", error);
+      }
+    };
+    // Set up an interval to fetch data every 3 seconds
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 1800000);
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     setConvertedValue(
