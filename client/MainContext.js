@@ -9,6 +9,7 @@ const MainProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [formToggle, setFormToggle] = useState(false);
   const [token, setToken] = useState("");
+  const [handleChange, setHandleChange] = useState(false);
 
   useEffect(() => {
     fetchUserDataFromAsyncStorage(setUser);
@@ -25,6 +26,8 @@ const MainProvider = ({ children }) => {
         setFormToggle,
         token,
         setToken,
+        handleChange,
+        setHandleChange,
       }}
     >
       {children}

@@ -4,11 +4,11 @@ import Colors from "../utils/Colors";
 import Headers from "../components/Headers";
 import WebSocketComponent from "../components/WebSocketComponent";
 
-const History = ({ navigation }) => {
+const CameraView = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
-      <Headers navDirection="History" navigation={navigation} />
-      <Text>History</Text>
+      <Headers navDirection="CameraView" navigation={navigation} />
+      <Text>CameraView</Text>
       <WebSocketComponent />
     </SafeAreaView>
   );
@@ -20,4 +20,4 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
 });
-export default History;
+export default CameraView;

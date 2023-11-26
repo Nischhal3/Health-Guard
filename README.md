@@ -21,6 +21,31 @@ email VARCHAR(255) UNIQUE NOT NULL,
 password VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE notification (
+sensor_id INT AUTO_INCREMENT PRIMARY KEY,
+date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+location VARCHAR(255),
+sensor_reading VARCHAR(255),
+type VARCHAR(255),
+warning TEXT,
+userId INT,
+FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE,
+);
+
+# Command is used to activate a virtual environment
+
+- python3 -m venv path/to/venv
+- source path/to/venv/bin/activate
+- pip install Adafruit-DHT
+- pip install paho-mqtt
+- pip install adafruit-blinka
+- pip install Pillow
+- pip install adafruit-circuitpython-ssd1306
+
+# Check if Oled is connected
+
+- i2cdetect -y 1
+
 # Start MQTT
 
 - Find running application on port 1883 : netstat -an | findstr "1883"

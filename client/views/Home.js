@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import {
+  Alert,
   Image,
   SafeAreaView,
   StyleSheet,
@@ -25,15 +26,32 @@ const Home = ({ navigation }) => {
   const navDirection = "Home";
   const { setIsLoggedIn, user } = useContext(MainContext);
 
-  const handleLogOut = async () => {
-    await deleteUserDataFromAsyncStorage();
-    setIsLoggedIn(false);
-    navigation.navigate("Main");
+  const handleLogOut = () => {
+    Alert.alert(
+      "Log Out",
+      "Are you sure you want to log out?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Log Out",
+          onPress: async () => {
+            await deleteUserDataFromAsyncStorage();
+            setIsLoggedIn(false);
+            navigation.navigate("Main");
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
+
   const handleSettings = () => {
     navigation.navigate("Settings", { navDirection });
   };
-  console.log("Home", user);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -47,7 +65,11 @@ const Home = ({ navigation }) => {
       <Logo />
       <HomeButton title="Rooms" icon={HomeIcon} navigation={navigation} />
       <HomeButton title="Alerts" icon={AlertIcon} navigation={navigation} />
-      <HomeButton title="History" icon={HistroyIcon} navigation={navigation} />
+      <HomeButton
+        title="View Camera"
+        icon={HistroyIcon}
+        navigation={navigation}
+      />
     </SafeAreaView>
   );
 };

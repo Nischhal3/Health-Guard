@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -10,6 +10,8 @@ import {
 import Colors from "../utils/Colors";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import RadioGroup, { RadioButton } from "react-native-radio-buttons-group";
+import { MainContext } from "../MainContext";
+import { postNotification } from "../services/NotificationApi";
 
 // Hard coded data to be changed later
 const radioButtonsData = [
@@ -31,19 +33,27 @@ const radioButtonsData = [
 ];
 
 const SensorData = (props) => {
-  // Set default value to radio button
-  const [radioButton, setRadioButton] = useState(radioButtonsData[0].id);
+  const { imageIcon, size, height, data } = props;
+  const [radioButton, setRadioButton] = useState(radioButtonsData[1].id);
+  const { user } = useContext(MainContext);
 
-  function onPressRadioButton(pickedButton) {
-    setRadioButton(pickedButton);
-  }
-  console.log("picked button", radioButton);
+  const onPressRadioButton = async (pickedButton) => {
+    // setRadioButton(pickedButton);
+    const response = await postNotification(user.token, data);
+  };
+  useEffect(() => {
+    if (data?.sensor === "temperature") {
+      setRadioButton(
+        data.humidity < 30 ? "1" : data.humidity <= 60 ? "2" : "3"
+      );
+    } else {
+      // Block for other sensor values
+    }
+  }, [data]);
+
   return (
     <View style={styles.container}>
-      <Image
-        source={props.imageIcon}
-        style={{ width: props.size, height: props.height }}
-      />
+      <Image source={props.imageIcon} style={{ width: size, height: height }} />
       <RadioGroup
         radioButtons={radioButtonsData}
         onPress={onPressRadioButton}

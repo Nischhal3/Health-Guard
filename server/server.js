@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const router = require("./routes/SampleRoute");
+const notificationRouter = require("./routes/notificationRoute");
 const authRoute = require("./routes/authRoute");
 const passport = require("./utils/passport");
 const http = require("http");
@@ -14,7 +14,7 @@ const PORT = 3000;
 const {
   connectToMQTTBroker,
   subscribeToMQTTTopic,
-  publishMessageToMQTTClient,
+  subscribeToMQTTTopics,
 } = require("./utils/mqtt");
 const { authenticateSocket, handleSocketEvents } = require("./utils/socket");
 
@@ -26,16 +26,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRoute);
-app.use("/", passport.authenticate("jwt", { session: false }), router);
+app.use(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  notificationRouter
+);
 
 io.use(authenticateSocket);
-
 const mqttClient = connectToMQTTBroker();
 mqttClient.setMaxListeners(15);
-subscribeToMQTTTopic(mqttClient);
+subscribeToMQTTTopics(mqttClient);
+
 io.on("connection", (socket) => {
-  console.log("socket connected...");
-  handleSocketEvents(socket, mqttClient);  
+  handleSocketEvents(socket, mqttClient);
 });
 
 server.listen(PORT, () => {

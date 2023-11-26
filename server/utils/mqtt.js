@@ -3,14 +3,11 @@ require("dotenv").config();
 const mqtt = require("mqtt");
 
 const connectToMQTTBroker = () => {
-  console.log("connecting to mosquitto broker...");
   const mqttClient = mqtt.connect(process.env.mqttBrokerAddress, {
-    clientId: "testNode",
-    protocolId: "MQIsdp",
-    protocolVersion: 3,
-    connectTimeout: 1000,
-    debug: true,
+    username: process.env.mqttUsername,
+    password: process.env.mqttPassword,
   });
+
   mqttClient.on("connect", () => {
     console.log("Connected to MQTT broker");
   });
@@ -26,33 +23,56 @@ const connectToMQTTBroker = () => {
   return mqttClient;
 };
 
-const subscribeToMQTTTopic = (mqttClient) => {
-  const mqttTopic = process.env.mqttTopic;
-
-  mqttClient.subscribe(mqttTopic, (err) => {
-    if (err) {
-      console.error(`Error subscribing to ${mqttTopic}: ${err}`);
-    } else {
-      console.log(`Subscribed to ${mqttTopic}`);
-    }
+const subscribeToMQTTTopics = (mqttClient, topics) => {
+  const mqttTopics = ["mqtt_temp", "mqtt_image", "system_info"];
+  mqttTopics.forEach((topic) => {
+    mqttClient.subscribe(topic, (err) => {
+      if (err) {
+        console.error(`Error subscribing to ${topic}: ${err}`);
+      } else {
+        console.log(`Subscribed to ${topic}`);
+      }
+    });
   });
 };
-const publishMessageToMQTTClient = async (socket, mqttClient) => {
+
+const publishMessageToMQTTClient = (socket, mqttClient) => {
   // Event listener for MQTT messages
   mqttClient.on("message", (topic, message) => {
     console.log(`Received message on topic ${topic}`);
-    const data = {
+    let data;
+    let sensorType;
+    try {
+      data = JSON.parse(message.toString());
+      sensorType = data.sensor;
+    } catch (error) {
+      console.error("Error parsing message:", error);
+    }
+
+    const formattedData = {
       topic: topic,
-      message: message.toString(),
+      sensorType: sensorType,
+      message: data,
     };
+
     // Emit the MQTT message to the connected client
-    console.log(data);
-    socket.emit("tempData", data);
+    socket.emit("mqttMessage", formattedData);
+  });
+};
+
+const publishMessageToMQTTServer = (mqttClient, data, topic) => {
+  mqttClient.publish(topic, JSON.stringify(data), (err) => {
+    if (err) {
+      console.error("Error publishing data:", err);
+    } else {
+      console.log("Data published successfully:", data);
+    }
   });
 };
 
 module.exports = {
   connectToMQTTBroker,
-  subscribeToMQTTTopic,
+  subscribeToMQTTTopics,
   publishMessageToMQTTClient,
+  publishMessageToMQTTServer,
 };
