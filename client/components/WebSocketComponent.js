@@ -7,6 +7,7 @@ import { baseUrl } from "../utils/Variables";
 
 const WebSocketComponent = () => {
   const [imageData, setImageData] = useState(null);
+  const [systemInfo, setSystemInfo] = useState(null);
   const { user } = useContext(MainContext);
 
   useEffect(() => {
@@ -16,6 +17,8 @@ const WebSocketComponent = () => {
     socket.on("mqttMessage", (data) => {
       if (data.sensorType === "camera") {
         setImageData(data.message);
+      } else if (data.sensorType === "in_build") {
+        setSystemInfo(data.message);
       }
     });
 
@@ -38,6 +41,15 @@ const WebSocketComponent = () => {
         />
       ) : (
         <Text>Loading....</Text>
+      )}
+      {systemInfo !== null && (
+        <View>
+          <Text>CPU: {systemInfo.CPU}</Text>
+          <Text>DISK: {systemInfo.Disk}</Text>
+          <Text>Memory Usage: {systemInfo.MemUsage}</Text>
+          <Text>IP Address: {systemInfo.IP}</Text>
+          <Text>System temperature: {systemInfo.Temperature}</Text>
+        </View>
       )}
     </View>
   );

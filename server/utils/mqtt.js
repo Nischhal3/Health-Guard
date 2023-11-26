@@ -24,7 +24,7 @@ const connectToMQTTBroker = () => {
 };
 
 const subscribeToMQTTTopics = (mqttClient, topics) => {
-  const mqttTopics = ["mqtt_temp", "mqtt_image"];
+  const mqttTopics = ["mqtt_temp", "mqtt_image", "system_info"];
   mqttTopics.forEach((topic) => {
     mqttClient.subscribe(topic, (err) => {
       if (err) {

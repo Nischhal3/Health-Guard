@@ -42,6 +42,10 @@ FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE,
 - pip install Pillow
 - pip install adafruit-circuitpython-ssd1306
 
+# Check if Oled is connected
+
+- i2cdetect -y 1
+
 # Start MQTT
 
 - Find running application on port 1883 : netstat -an | findstr "1883"

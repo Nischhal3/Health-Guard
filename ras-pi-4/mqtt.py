@@ -12,6 +12,7 @@ topic_receive_temp = "temp_data"
 # send topic
 topic_send_image = "mqtt_image"
 topic_send_temp = "mqtt_temp"
+topic_send_system_info="system_info"
 
 pin = 17
 
@@ -71,6 +72,41 @@ def read_and_publish_temperature(client, pin):
 
         time.sleep(10)  # Sleep for 10 seconds before reading again
 
+def publish_system_data(client):
+    while True:
+        # Execute system commands
+        cmd_ip = "hostname -I | cut -d\' \' -f1 | head --bytes -1"
+        IP = subprocess.check_output(cmd_ip, shell=True).decode("utf-8").strip()
+
+        cmd_cpu = "top -bn1 | grep load | awk '{printf \"%.2fLA\", $(NF-2)}'"
+        CPU = subprocess.check_output(cmd_cpu, shell=True).decode("utf-8").strip()
+
+        cmd_mem = "free -m | awk 'NR==2{printf \"%.2f%%\", $3*100/$2 }'"
+        MemUsage = subprocess.check_output(cmd_mem, shell=True).decode("utf-8").strip()
+
+        cmd_disk = "df -h | awk '$NF==\"/\"{printf \"HDD: %d/%dGB %s\", $3,$2,$5}'"
+        cmd_disk_short = "df -h | awk '$NF==\"/\"{printf \"%d/%dGB\", $3,$2}'"
+        Disk = subprocess.check_output(cmd_disk, shell=True).decode("utf-8").strip()
+
+        cmd_temp = "vcgencmd measure_temp | cut -d '=' -f 2 | head --bytes -1"
+        Temperature = subprocess.check_output(cmd_temp, shell=True).decode("utf-8").strip()
+
+        # Create JSON payload
+        system_data = {
+            "IP": IP,
+            "CPU": CPU,
+            "MemUsage": MemUsage,
+            "Disk": Disk,
+            "Temperature": Temperature,
+            "sensor": "in_build"
+        }
+
+        # Convert to JSON and publish via MQTT
+        mqtt_payload = json.dumps(system_data)
+        client.publish(topic_send_system_info, payload=mqtt_payload, qos=0, retain=False)
+
+        time.sleep(10)  # Publish every 10 seconds
+
 # Read MQTT configuration from config.json
 with open("config.json", "r") as config_file:
     config = json.load(config_file)
@@ -91,13 +127,16 @@ client.loop_start()
 # Create threads for each function
 capture_thread = threading.Thread(target=capture_and_publish_image, args=(client,))
 temperature_thread = threading.Thread(target=read_and_publish_temperature, args=(client, pin))
+system_data_thread = threading.Thread(target=publish_system_data, args=(client,))
 
-# Start both threads
+# Start all threads
 capture_thread.start()
 temperature_thread.start()
+system_data_thread.start()
 
-# Wait for both threads to finish
+# Wait for all threads to finish
 capture_thread.join()
 temperature_thread.join()
+system_data_thread.join()
 
 print("Exiting program.")
