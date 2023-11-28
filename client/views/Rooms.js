@@ -18,7 +18,6 @@ const Rooms = ({ navigation }) => {
 
     socket.on("mqttMessage", (data) => {
       if (data.sensorType === "temperature") {
-        console.log(`Received data from ${data.sensorType} sensor`);
         setData(data.message);
       }
     });

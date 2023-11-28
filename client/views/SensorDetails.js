@@ -16,7 +16,20 @@ import humidityIcon from "../assets/humidity.png";
 import { MainContext } from "../MainContext";
 import { baseUrl } from "../utils/Variables";
 import { io } from "socket.io-client";
-import { postNotification } from "../services/NotificationApi";
+import {
+  getAllNotification,
+  postNotification,
+} from "../services/NotificationApi";
+
+const temperatureWarning = (temperature) =>
+  temperature < 15 || temperature > 25;
+
+const warningMessage = (temperature) =>
+  temperature > 23
+    ? `Too hot ${temperature}`
+    : temperature < 15
+    ? `Too cold ${temperature}`
+    : undefined;
 
 export const SensorDetails = ({ navigation, route }) => {
   const { user } = useContext(MainContext);
@@ -35,23 +48,45 @@ export const SensorDetails = ({ navigation, route }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (temp < 15 || temp > 23) {
-          let warning;
-          if (temp > 23) {
-            warning = "Too Hot";
-          } else if (temp < 15 && temp > 8) {
-            warning = "Too Cold";
-          } else if (temp <= 7) {
-            warning = `It's Freezing`;
+        const response = await getAllNotification(user.token);
+        const notifications = await response.json();
+
+        const _temperatureWarning = temperatureWarning(data.temperature);
+
+        const notificationData = {
+          location: data.location,
+          sensor_reading: data.temperature,
+          type: data.sensor,
+          userId: user.data.id,
+          warning: warningMessage(data.temperature),
+        };
+
+        if (_temperatureWarning) {
+          /**
+           * if notification is empty no checking shall be done
+           */
+          if (notifications.status === 409) {
+            await postNotification(user.token, notificationData);
+            return;
+          } else {
+            const timeDiffrenceIsMoreThanHour = checkTimeDifference(
+              notifications,
+              data.location,
+              data.sensor,
+              user.data.id
+            );
+            console.log(timeDiffrenceIsMoreThanHour);
+
+            /**
+             * Conditions to execute this block
+             * temperature should be below 15 or above 23
+             * Sensor in same location of same type with same user id will wait 1 hour to send next notification
+             *
+             */
+            if (timeDiffrenceIsMoreThanHour) {
+              await postNotification(user.token, notificationData);
+            }
           }
-          const data = {
-            location: data.location,
-            sensor_reading: temp,
-            type: data.sensor,
-            userId: user.data.id,
-            warning: warning,
-          };
-          await postNotification(user.token, data);
         }
       } catch (error) {
         console.error("Error posting data:", error);
@@ -60,7 +95,7 @@ export const SensorDetails = ({ navigation, route }) => {
     // Set up an interval to fetch data every 30 minutes
     const intervalId = setInterval(() => {
       fetchData();
-    }, 1800000);
+    }, 3000);
 
     // Clear the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -178,6 +213,32 @@ const convertTempValueToBarRange = (
   );
 
   return convertedValue;
+};
+
+const checkTimeDifference = (notifications, location, type, userId) => {
+  for (const notification of notifications) {
+    if (
+      notification.location === location &&
+      notification.userId === userId &&
+      notification.type === type
+    ) {
+      const notificationDate = new Date(notification.date);
+      const currentDate = new Date();
+
+      if (!isNaN(notificationDate.getTime())) {
+        const timeDifferenceInMilliseconds = currentDate - notificationDate;
+        const timeDifferenceInHours =
+          timeDifferenceInMilliseconds / (1000 * 60 * 60);
+
+        if (timeDifferenceInHours >= 3) {
+          return true;
+        }
+      } else {
+        console.log("Invalid date format");
+      }
+    }
+  }
+  return false;
 };
 
 const styles = StyleSheet.create({

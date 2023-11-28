@@ -6,12 +6,16 @@ import { MainContext } from "../MainContext";
 import { baseUrl } from "../utils/Variables";
 import Colors from "../utils/Colors";
 import Headers from "../components/Headers";
+import {
+  getAllNotification,
+  postNotification,
+} from "../services/NotificationApi";
 
 const Info = ({ navigation }) => {
   const [imageData, setImageData] = useState(null);
   const [systemInfo, setSystemInfo] = useState(null);
   const { user } = useContext(MainContext);
-
+  const [piTemperature, setPiTemperature] = useState(0);
   useEffect(() => {
     const socket = io(baseUrl, {
       auth: { token: user.token },
@@ -33,6 +37,59 @@ const Info = ({ navigation }) => {
       socket.disconnect();
     };
   }, [user.token]);
+
+  useEffect(() => {
+    if (systemInfo !== null) {
+      setPiTemperature(parseFloat(systemInfo.Temperature));
+    }
+  }, [systemInfo]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAllNotification(user.token);
+        const notifications = await response.json();
+
+        if (piTemperature > 45) {
+          const notificationData = {
+            location: "internal",
+            sensor_reading: piTemperature,
+            type: "Pi Temperature",
+            userId: user.data.id,
+            warning: "Over heating Rasberry Pi",
+          };
+          /**
+           * if notification is empty no checking shall be done
+           */
+          if (notifications.status === 409) {
+            await postNotification(user.token, notificationData);
+            return;
+          }
+          const timeDiffrenceIsMoreThanHour = checkTimeDifference(
+            notifications,
+            user.data.id
+          );
+          /**
+           * Conditions to execute this block
+           * piTemperature should be above 45
+           * Pi same user id will wait 1 hour to send next notification
+           */
+          if (timeDiffrenceIsMoreThanHour) {
+            await postNotification(user.token, notificationData);
+          }
+        }
+      } catch (error) {
+        console.error("Error posting data:", error);
+      }
+    };
+    // Set up an interval to fetch data every 30 minutes
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 3000);
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -69,6 +126,27 @@ const Info = ({ navigation }) => {
       </View>
     </SafeAreaView>
   );
+};
+
+const checkTimeDifference = (notifications, userId) => {
+  for (const notification of notifications) {
+    if (notification.userId === userId) {
+      const notificationDate = new Date(notification.date);
+      const currentDate = new Date();
+
+      if (!isNaN(notificationDate.getTime())) {
+        const timeDifferenceInMilliseconds = currentDate - notificationDate;
+        const timeDifferenceInHours =
+          timeDifferenceInMilliseconds / (1000 * 60 * 60);
+        if (timeDifferenceInHours >= 3) {
+          return true;
+        }
+      } else {
+        console.log("Invalid date format");
+      }
+    }
+  }
+  return false;
 };
 
 const styles = StyleSheet.create({
