@@ -13,14 +13,13 @@ const getAllNotification = async (token) => {
 };
 
 const postNotification = async (token, data) => {
-  console.log(JSON.stringify(data));
   const options = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(data), // Convert the data to JSON format
+    body: JSON.stringify(data),
   };
 
   return await fetch(`${baseUrl}/notification`, options);

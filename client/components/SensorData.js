@@ -53,7 +53,7 @@ const SensorData = (props) => {
 
   return (
     <View style={styles.container}>
-      <Image source={props.imageIcon} style={{ width: size, height: height }} />
+      <Image source={imageIcon} style={{ width: size, height: height }} />
       <RadioGroup
         radioButtons={radioButtonsData}
         onPress={onPressRadioButton}

@@ -1,36 +1,63 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import Colors from "../utils/Colors";
 import Headers from "../components/Headers";
 import RoomInfoBar from "../components/RoomInfoBar";
+import { MainContext } from "../MainContext";
+import { io } from "socket.io-client";
+import { baseUrl } from "../utils/Variables";
 
 const Rooms = ({ navigation }) => {
+  const { user } = useContext(MainContext);
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    const socket = io(baseUrl, {
+      auth: { token: user.token },
+    });
+
+    socket.on("mqttMessage", (data) => {
+      if (data.sensorType === "temperature") {
+        setData(data.message);
+      }
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    // Clean up the socket connection when the component unmounts
+    return () => {
+      socket.disconnect();
+    };
+  }, [user.token]);
+
   return (
     <SafeAreaView style={styles.container}>
       <Headers navDirection="Rooms" navigation={navigation} />
       <View style={styles.roomContainer}>
         <Text style={styles.text}>Your Rooms</Text>
         <ScrollView>
-          <RoomInfoBar
-            title="Living Room"
-            navigation={navigation}
-            roomLocation="living_room"
-          />
-          <RoomInfoBar
-            title="Bed Room"
-            navigation={navigation}
-            roomLocation="bed_room"
-          />
-          <RoomInfoBar
-            title="Kitchen Room"
-            navigation={navigation}
-            roomLocation="kitchen"
-          />
-          <RoomInfoBar
-            title="Bath Room"
-            navigation={navigation}
-            roomLocation="bath_room"
-          />
+          {data !== undefined && data.location === "living_room" && (
+            <RoomInfoBar
+              title="Living Room"
+              navigation={navigation}
+              data={data}
+            />
+          )}
+          {data !== undefined && data.location === "bed_room" && (
+            <RoomInfoBar title="Bed Room" navigation={navigation} data={data} />
+          )}
+          {data !== undefined && data.location === "kitchen" && (
+            <RoomInfoBar title="Kitchen" navigation={navigation} data={data} />
+          )}
+          {data !== undefined && data.location === "bath_room" && (
+            <RoomInfoBar
+              title="Bath Room"
+              navigation={navigation}
+              data={data}
+            />
+          )}
         </ScrollView>
       </View>
     </SafeAreaView>

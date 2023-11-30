@@ -11,7 +11,7 @@ import Alerts from "../views/Alerts";
 import Settings from "../views/Settings";
 import { SensorDetails } from "../views/SensorDetails";
 import Colors from "../utils/Colors";
-import CameraView from "../views/CameraView";
+import Info from "../views/Info";
 
 const Stack = createStackNavigator();
 
@@ -43,7 +43,7 @@ const NavScareen = () => {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Rooms" component={Rooms} />
             <Stack.Screen name="Alerts" component={Alerts} />
-            <Stack.Screen name="View Camera" component={CameraView} />
+            <Stack.Screen name="Info" component={Info} />
             <Stack.Screen name="Settings" component={Settings} />
             <Stack.Screen name="SensorDetails" component={SensorDetails} />
           </Stack.Navigator>

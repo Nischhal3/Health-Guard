@@ -16,19 +16,90 @@ import humidityIcon from "../assets/humidity.png";
 import { MainContext } from "../MainContext";
 import { baseUrl } from "../utils/Variables";
 import { io } from "socket.io-client";
+import {
+  getAllNotification,
+  postNotification,
+} from "../services/NotificationApi";
+
+const temperatureWarning = (temperature) =>
+  temperature < 15 || temperature > 25;
+
+const warningMessage = (temperature) =>
+  temperature > 23
+    ? `Too hot ${temperature}`
+    : temperature < 15
+    ? `Too cold ${temperature}`
+    : undefined;
 
 export const SensorDetails = ({ navigation, route }) => {
-  const [temp, setTemp] = useState(0);
-  const [humidity, setHumidty] = useState(0);
   const { user } = useContext(MainContext);
-  const [tempData, setTempData] = useState("");
   const [convertedValue, setConvertedValue] = useState(0);
-  const { roomLocation } = route.params;
-
+  const { data } = route.params;
+  const [temp, setTemp] = useState(0);
   const minTemp = 15;
   const maxTemp = 32;
   const progressBarMinValue = 1;
   const progressBarMaxValue = 100;
+
+  useEffect(() => {
+    setTemp(data.temperature);
+  }, [data]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAllNotification(user.token);
+        const notifications = await response.json();
+
+        const _temperatureWarning = temperatureWarning(data.temperature);
+
+        const notificationData = {
+          location: data.location,
+          sensor_reading: data.temperature,
+          type: data.sensor,
+          userId: user.data.id,
+          warning: warningMessage(data.temperature),
+        };
+
+        if (_temperatureWarning) {
+          /**
+           * if notification is empty no checking shall be done
+           */
+          if (notifications.status === 409) {
+            await postNotification(user.token, notificationData);
+            return;
+          } else {
+            const timeDiffrenceIsMoreThanHour = checkTimeDifference(
+              notifications,
+              data.location,
+              data.sensor,
+              user.data.id
+            );
+            console.log(timeDiffrenceIsMoreThanHour);
+
+            /**
+             * Conditions to execute this block
+             * temperature should be below 15 or above 23
+             * Sensor in same location of same type with same user id will wait 1 hour to send next notification
+             *
+             */
+            if (timeDiffrenceIsMoreThanHour) {
+              await postNotification(user.token, notificationData);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error posting data:", error);
+      }
+    };
+    // Set up an interval to fetch data every 30 minutes
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 3000);
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     setConvertedValue(
@@ -41,33 +112,6 @@ export const SensorDetails = ({ navigation, route }) => {
       )
     );
   }, [temp]);
-
-  useEffect(() => {
-    const socket = io(baseUrl, {
-      auth: { token: user.token },
-    });
-
-    socket.on("mqttMessage", (data) => {
-      if (
-        data.sensorType === "temperature" &&
-        data.message.location === roomLocation
-      ) {
-        console.log(`Received temperature data: from ${data.message.location}`);
-        setTemp(data.message.temperature);
-        setHumidty(data.message.humidity);
-        setTempData(data.message);
-      }
-    });
-
-    socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-    });
-
-    // Clean up the socket connection when the component unmounts
-    return () => {
-      socket.disconnect();
-    };
-  }, [user.token]);
 
   const increaseTemp = () => {
     if (temp === 32) {
@@ -92,7 +136,7 @@ export const SensorDetails = ({ navigation, route }) => {
     // Emit the data to the server
     socket.emit("tempData", {
       temperature: temp,
-      location: roomLocation,
+      location: "location",
       action: action,
     });
 
@@ -147,7 +191,7 @@ export const SensorDetails = ({ navigation, route }) => {
           imageIcon={humidityIcon}
           size={30}
           height={30}
-          data={tempData}
+          data={data}
         />
         <SensorData imageIcon={runningIcon} size={30} height={35} />
       </View>
@@ -169,6 +213,32 @@ const convertTempValueToBarRange = (
   );
 
   return convertedValue;
+};
+
+const checkTimeDifference = (notifications, location, type, userId) => {
+  for (const notification of notifications) {
+    if (
+      notification.location === location &&
+      notification.userId === userId &&
+      notification.type === type
+    ) {
+      const notificationDate = new Date(notification.date);
+      const currentDate = new Date();
+
+      if (!isNaN(notificationDate.getTime())) {
+        const timeDifferenceInMilliseconds = currentDate - notificationDate;
+        const timeDifferenceInHours =
+          timeDifferenceInMilliseconds / (1000 * 60 * 60);
+
+        if (timeDifferenceInHours >= 3) {
+          return true;
+        }
+      } else {
+        console.log("Invalid date format");
+      }
+    }
+  }
+  return false;
 };
 
 const styles = StyleSheet.create({
