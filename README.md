@@ -64,6 +64,15 @@ FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE,
 - sudo service mosquitto restart
 - sudo service mosquitto enable
 - sudo service mosquitto status [Should be active]
+- sudo cat /var/log/mosquitto/mosquitto.log
+
+# Publish from MQTT
+
+- sudo /usr/bin/mosquitto_pub -p 8883 --cafile /etc/mosquitto/certs/ca.crt --cert /etc/mosquitto/certs/server.crt --key /etc/mosquitto/certs/server.key -h mqtt_ip_address -m hello -t world -u username -P password
+
+# Subscribe to MQTT
+
+- sudo /usr/bin/mosquitto_sub -p 8883 --cafile /etc/mosquitto/certs/ca.crt --cert /etc/mosquitto/certs/server.crt --key /etc/mosquitto/certs/server.key -h mqtt_ip_address -t world -u username -P password
 
 # Activate Webcam In Terminal
 
