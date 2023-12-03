@@ -103,9 +103,6 @@ const Alerts = ({ navigation }) => {
           />
         )}
       </View>
-      {/* <TouchableOpacity onPress={clearAllNotifications}>
-        <Text style={styles.clearText}>Clear All Notification</Text>
-      </TouchableOpacity> */}
       <ToastContainer />
     </SafeAreaView>
   );

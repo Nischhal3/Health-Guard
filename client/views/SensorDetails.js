@@ -26,9 +26,9 @@ const temperatureWarning = (temperature) =>
 
 const warningMessage = (temperature) =>
   temperature > 23
-    ? `Too hot ${temperature}`
+    ? `Too hot ${temperature} degree celcious!`
     : temperature < 15
-    ? `Too cold ${temperature}`
+    ? `Too cold ${temperature} degree celcious!`
     : undefined;
 
 export const SensorDetails = ({ navigation, route }) => {

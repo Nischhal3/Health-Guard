@@ -45,6 +45,10 @@ const Notification = ({ notification }) => {
   };
   const date = new Date(notification.date);
   const formattedTime = date.toLocaleTimeString();
+  const room = notification.location
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 
   return (
     <View style={styles.container}>
@@ -57,7 +61,9 @@ const Notification = ({ notification }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.messageContainer}>
-        <Text style={styles.message}>{notification.warning}</Text>
+        <Text style={styles.message}>
+          {notification.warning} [{room}]
+        </Text>
       </View>
       <ToastContainer />
     </View>
