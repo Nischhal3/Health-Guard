@@ -1,12 +1,22 @@
 "use strict";
 require("dotenv").config();
 const mqtt = require("mqtt");
+const fs = require("fs");
 
-const connectToMQTTBroker = () => {
-  const mqttClient = mqtt.connect(process.env.mqttBrokerAddress, {
+const connectToMQTTBroker = (caPath, certPath, keyPath) => {
+  const options = {
+    port: process.env.mqttBrokerPort,
+    protocol: process.env.protocol,
+    host: process.env.mqttBrokerAddress,
+    ca: fs.readFileSync(caPath),
+    cert: fs.readFileSync(certPath),
+    key: fs.readFileSync(keyPath),
+    rejectUnauthorized: true,
     username: process.env.mqttUsername,
     password: process.env.mqttPassword,
-  });
+  };
+
+  const mqttClient = mqtt.connect(options);
 
   mqttClient.on("connect", () => {
     console.log("Connected to MQTT broker");

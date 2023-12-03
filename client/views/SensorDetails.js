@@ -26,9 +26,9 @@ const temperatureWarning = (temperature) =>
 
 const warningMessage = (temperature) =>
   temperature > 23
-    ? `Too hot ${temperature}`
+    ? `Too hot ${temperature} degree celcious!`
     : temperature < 15
-    ? `Too cold ${temperature}`
+    ? `Too cold ${temperature} degree celcious!`
     : undefined;
 
 export const SensorDetails = ({ navigation, route }) => {
@@ -75,14 +75,13 @@ export const SensorDetails = ({ navigation, route }) => {
               data.sensor,
               user.data.id
             );
-            console.log(timeDiffrenceIsMoreThanHour);
-
             /**
              * Conditions to execute this block
              * temperature should be below 15 or above 23
              * Sensor in same location of same type with same user id will wait 1 hour to send next notification
              *
              */
+            console.log(timeDiffrenceIsMoreThanHour);
             if (timeDiffrenceIsMoreThanHour) {
               await postNotification(user.token, notificationData);
             }

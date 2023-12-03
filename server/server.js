@@ -11,11 +11,12 @@ const socketIo = require("socket.io");
 const server = http.createServer(app);
 const io = socketIo(server);
 const PORT = 3000;
-const {
-  connectToMQTTBroker,
-  subscribeToMQTTTopic,
-  subscribeToMQTTTopics,
-} = require("./utils/mqtt");
+
+const caPath = "certs/ca.crt";
+const certPath = "certs/server.crt";
+const keyPath = "certs/server.key";
+
+const { connectToMQTTBroker, subscribeToMQTTTopics } = require("./utils/mqtt");
 const { authenticateSocket, handleSocketEvents } = require("./utils/socket");
 
 app.use(cors());
@@ -33,7 +34,7 @@ app.use(
 );
 
 io.use(authenticateSocket);
-const mqttClient = connectToMQTTBroker();
+const mqttClient = connectToMQTTBroker(caPath, certPath, keyPath);
 mqttClient.setMaxListeners(15);
 subscribeToMQTTTopics(mqttClient);
 

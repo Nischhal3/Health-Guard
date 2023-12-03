@@ -5,6 +5,7 @@ import base64
 import time
 import json
 import threading
+import ssl 
 
 # receive topic
 topic_receive_temp = "temp_data"
@@ -12,7 +13,7 @@ topic_receive_temp = "temp_data"
 # send topic
 topic_send_image = "mqtt_image"
 topic_send_temp = "mqtt_temp"
-topic_send_system_info="system_info"
+topic_send_system_info = "system_info"
 
 pin = 17
 
@@ -48,7 +49,7 @@ def capture_and_publish_image(client):
         }
         client.publish(topic_send_image, payload=json.dumps(image_payload), qos=0, retain=False)
 
-        time.sleep(10)  # Publish every 10 seconds
+        time.sleep(3)  # Publish every 3 seconds
 
 def read_and_publish_temperature(client, pin):
     while True:
@@ -70,7 +71,7 @@ def read_and_publish_temperature(client, pin):
         else:
             print('Failed to retrieve data from DHT11 sensor')
 
-        time.sleep(10)  # Sleep for 10 seconds before reading again
+        time.sleep(3)  # Publish every 3 seconds
 
 def publish_system_data(client):
     while True:
@@ -105,7 +106,7 @@ def publish_system_data(client):
         mqtt_payload = json.dumps(system_data)
         client.publish(topic_send_system_info, payload=mqtt_payload, qos=0, retain=False)
 
-        time.sleep(10)  # Publish every 10 seconds
+        time.sleep(3)  # Publish every 3 seconds
 
 # Read MQTT configuration from config.json
 with open("config.json", "r") as config_file:
@@ -116,11 +117,17 @@ username = config["mqttUsername"]
 password = config["mqttPassword"]
 port = config["mqttPort"]
 
+# SSL/TLS settings
+ca_path = "ca.crt"
+cert_path = "server.crt"
+key_path = "server.key"
+
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
 client.username_pw_set(username, password)
+client.tls_set(ca_certs=ca_path, certfile=cert_path, keyfile=key_path, tls_version=ssl.PROTOCOL_TLS)
 client.connect(broker_address, port, 60)
 client.loop_start()
 

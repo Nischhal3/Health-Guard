@@ -85,5 +85,8 @@ server/jspm_packages/
 
 # .env file
 server/.env
+# certs folder
+server/certs
+
 ras-pi-4/config.json
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode
