@@ -1,8 +1,14 @@
 # HealthGuard
 
+<p align="center">
+  <img src="client/assets/logo.png" alt="Alt text" width="300">
+</p>
+
 # Table of Content
 
 - [Introduction](#introduction)
+- [Application-Structure](#application-structure)
+- [REST-API](#rest-api)
 - [Prerequisites](#prerequisites)
 - [Dependencies](#dependencies)
 - [Setup](#setup)
@@ -23,6 +29,160 @@ Welcome to HealthGuard, a powerful and secure IoT data monitoring and notificati
 - **React Native Front End:** HealthGuard comes with a feature-rich React Native front-end application. Leverage the power of React Native to create a user-friendly and responsive interface for monitoring and interacting with your IoT data. The React Native app ensures a seamless experience for users on various devices, offering real-time updates and a smooth interface.
 
 - **Raspberry Pi Integration:** On the Raspberry Pi side, we use Python scripts to retrieve and publish data to and from the server. This integration enables HealthGuard to tap into the potential of Raspberry Pi's sensors and bring real-world data into the system. The Python code facilitates a robust connection between the physical sensors and the centralized server, ensuring a reliable flow of information.
+
+## Application-Structure
+
+### Application Design
+
+<p align="center">
+  <img src="client/assets/chart.PNG" alt="Alt text" width="300">
+</p>
+
+### Database
+
+<p align="center">
+  <img src="client/assets/database.PNG" alt="Alt text" width="300">
+</p>
+
+## REST-API
+
+### User
+
+POST /auth/register
+
+```api
+  {
+    message: `user added with id: 10`,
+    status: 200
+  }
+```
+
+POST /auth/login<br>
+On successful login
+
+```api
+  {
+    user: user,
+    token: token,
+    status: 200
+  }
+```
+
+On unsuccessful login
+
+```api
+  {
+    message: "Invalid email or password",
+    status: 400,
+  }
+```
+
+### Notification
+
+GET /notification
+
+```api
+[
+  {
+      "sensor_id": 413,
+      "userId": 5,
+      "location": "living_room",
+      "type": "temperature",
+      "sensor_reading": "28",
+      "date": "2023-12-03T10:11:36.000Z",
+      "warning": "Too cold 10 degree celcious!"
+  },
+  {
+      "sensor_id": 414,
+      "userId": 5,
+      "location": "living_room",
+      "type": "temperature",
+      "sensor_reading": "28",
+      "date": "2023-12-03T10:12:31.000Z",
+      "warning": "Too hot 32 degree celcious!"
+  }
+]
+```
+
+GET /notification<br>
+If no notification found
+
+```api
+{
+  message: `No notification found`,
+  status: 409
+}
+```
+
+POST /notification
+
+```api
+{
+  "message": "Notification with id 1 added.",
+  "status": 200
+}
+```
+
+DELETE /notification/:id<br>
+If notification not found
+
+```api
+{
+  "message": "Notification with ID 1 not found",
+  "status": 404
+}
+```
+
+On successful notification deletion
+
+```api
+{
+  "message": "Notification with ID 413 deleted successfully",
+  "status": 200
+}
+```
+
+On successful deletion of all notfication
+
+```api
+{
+  "message": "10 notifications deleted successfully",
+  "status": 200
+}
+```
+
+When deleting all notification, if notification is empty
+
+```api
+{
+  "message": "No notifications found to delete",
+  "status": 404
+}
+```
+
+MQTT response example to application via server
+
+```api
+{
+  "temperature": 22.0,
+  "humidity": 20.0,
+  "sensor": "temperature",
+  "location":
+  "living_room"
+}
+```
+
+Application response example to MQTT via server
+
+```api
+{
+  location: "living_room",
+  sensor_reading: "10",
+  type: "temperature",
+  userId: "5",
+  warning: "Too cold 10 degree celcious! ",
+}
+```
 
 ## Prerequisites
 
