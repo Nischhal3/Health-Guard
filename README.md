@@ -8,6 +8,7 @@
 
 - [Introduction](#introduction)
 - [Application-Structure](#application-structure)
+- [REST-API](#rest-api)
 - [Prerequisites](#prerequisites)
 - [Dependencies](#dependencies)
 - [Setup](#setup)
@@ -42,6 +43,122 @@ Welcome to HealthGuard, a powerful and secure IoT data monitoring and notificati
 <p align="center">
   <img src="client/assets/database.PNG" alt="Alt text" width="300">
 </p>
+
+## REST-API
+
+### User
+
+POST /auth/register
+
+```api
+  {
+    message: `user added with id: 10`,
+    status: 200
+  }
+```
+
+POST /auth/login<br>
+On successful login
+
+```api
+  {
+    user: user,
+    token: token,
+    status: 200
+  }
+```
+
+On unsuccessful login
+
+```api
+  {
+    message: "Invalid email or password",
+    status: 400,
+  }
+```
+
+### Notification
+
+GET /notification
+
+```api
+[
+    {
+        "sensor_id": 413,
+        "userId": 5,
+        "location": "living_room",
+        "type": "temperature",
+        "sensor_reading": "28",
+        "date": "2023-12-03T10:11:36.000Z",
+        "warning": "Too cold 10 degree celcious!"
+    },
+    {
+        "sensor_id": 414,
+        "userId": 5,
+        "location": "living_room",
+        "type": "temperature",
+        "sensor_reading": "28",
+        "date": "2023-12-03T10:12:31.000Z",
+        "warning": "Too hot 32 degree celcious!"
+    }
+]
+```
+
+GET /notification<br>
+If no notification found
+
+```api
+  {
+    message: `No notification found`,
+    status: 409
+  }
+```
+
+POST /notification
+
+```api
+  {
+    "message": "Notification with id 1 added.",
+    "status": 200
+  }
+```
+
+DELETE /notification/:id<br>
+If notification not found
+
+```api
+{
+    "message": "Notification with ID 1 not found",
+    "status": 404
+}
+```
+
+On successful notification deletion
+
+```api
+{
+    "message": "Notification with ID 413 deleted successfully",
+    "status": 200
+}
+```
+
+On successful deletion of all notfication
+
+```api
+{
+    "message": "10 notifications deleted successfully",
+    "status": 200
+}
+```
+
+When deleting all notification, if notification is empty
+
+```api
+{
+    "message": "No notifications found to delete",
+    "status": 404
+}
+```
 
 ## Prerequisites
 
