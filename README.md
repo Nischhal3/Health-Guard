@@ -1,5 +1,9 @@
 # HealthGuard
 
+<p align="center">
+  <img src="client/assets/logo.png" alt="Alt text" width="300">
+</p>
+
 # Table of Content
 
 - [Introduction](#introduction)
