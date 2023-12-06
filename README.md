@@ -167,20 +167,17 @@ MQTT response example to application via server
   "temperature": 22.0,
   "humidity": 20.0,
   "sensor": "temperature",
-  "location":
-  "living_room"
+  "location": "living_room"
 }
 ```
 
-Application response example to MQTT via server
+App response example to MQTT via server
 
 ```api
 {
-  location: "living_room",
-  sensor_reading: "10",
-  type: "temperature",
-  userId: "5",
-  warning: "Too cold 10 degree celcious! ",
+  "temperature": "23",
+  "location": "living_room",
+  "action":"decrease"
 }
 ```
 
