@@ -7,6 +7,7 @@
 # Table of Content
 
 - [Introduction](#introduction)
+- [Application-Structure](#application-structure)
 - [Prerequisites](#prerequisites)
 - [Dependencies](#dependencies)
 - [Setup](#setup)
@@ -27,6 +28,20 @@ Welcome to HealthGuard, a powerful and secure IoT data monitoring and notificati
 - **React Native Front End:** HealthGuard comes with a feature-rich React Native front-end application. Leverage the power of React Native to create a user-friendly and responsive interface for monitoring and interacting with your IoT data. The React Native app ensures a seamless experience for users on various devices, offering real-time updates and a smooth interface.
 
 - **Raspberry Pi Integration:** On the Raspberry Pi side, we use Python scripts to retrieve and publish data to and from the server. This integration enables HealthGuard to tap into the potential of Raspberry Pi's sensors and bring real-world data into the system. The Python code facilitates a robust connection between the physical sensors and the centralized server, ensuring a reliable flow of information.
+
+## Application-Structure
+
+### Application Design
+
+<p align="center">
+  <img src="client/assets/chart.PNG" alt="Alt text" width="300">
+</p>
+
+### Database
+
+<p align="center">
+  <img src="client/assets/database.PNG" alt="Alt text" width="300">
+</p>
 
 ## Prerequisites
 
