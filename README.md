@@ -83,24 +83,24 @@ GET /notification
 
 ```api
 [
-    {
-        "sensor_id": 413,
-        "userId": 5,
-        "location": "living_room",
-        "type": "temperature",
-        "sensor_reading": "28",
-        "date": "2023-12-03T10:11:36.000Z",
-        "warning": "Too cold 10 degree celcious!"
-    },
-    {
-        "sensor_id": 414,
-        "userId": 5,
-        "location": "living_room",
-        "type": "temperature",
-        "sensor_reading": "28",
-        "date": "2023-12-03T10:12:31.000Z",
-        "warning": "Too hot 32 degree celcious!"
-    }
+  {
+      "sensor_id": 413,
+      "userId": 5,
+      "location": "living_room",
+      "type": "temperature",
+      "sensor_reading": "28",
+      "date": "2023-12-03T10:11:36.000Z",
+      "warning": "Too cold 10 degree celcious!"
+  },
+  {
+      "sensor_id": 414,
+      "userId": 5,
+      "location": "living_room",
+      "type": "temperature",
+      "sensor_reading": "28",
+      "date": "2023-12-03T10:12:31.000Z",
+      "warning": "Too hot 32 degree celcious!"
+  }
 ]
 ```
 
@@ -108,19 +108,19 @@ GET /notification<br>
 If no notification found
 
 ```api
-  {
-    message: `No notification found`,
-    status: 409
-  }
+{
+  message: `No notification found`,
+  status: 409
+}
 ```
 
 POST /notification
 
 ```api
-  {
-    "message": "Notification with id 1 added.",
-    "status": 200
-  }
+{
+  "message": "Notification with id 1 added.",
+  "status": 200
+}
 ```
 
 DELETE /notification/:id<br>
@@ -128,8 +128,8 @@ If notification not found
 
 ```api
 {
-    "message": "Notification with ID 1 not found",
-    "status": 404
+  "message": "Notification with ID 1 not found",
+  "status": 404
 }
 ```
 
@@ -137,8 +137,8 @@ On successful notification deletion
 
 ```api
 {
-    "message": "Notification with ID 413 deleted successfully",
-    "status": 200
+  "message": "Notification with ID 413 deleted successfully",
+  "status": 200
 }
 ```
 
@@ -146,8 +146,8 @@ On successful deletion of all notfication
 
 ```api
 {
-    "message": "10 notifications deleted successfully",
-    "status": 200
+  "message": "10 notifications deleted successfully",
+  "status": 200
 }
 ```
 
@@ -155,8 +155,32 @@ When deleting all notification, if notification is empty
 
 ```api
 {
-    "message": "No notifications found to delete",
-    "status": 404
+  "message": "No notifications found to delete",
+  "status": 404
+}
+```
+
+MQTT response example to application via server
+
+```api
+{
+  "temperature": 22.0,
+  "humidity": 20.0,
+  "sensor": "temperature",
+  "location":
+  "living_room"
+}
+```
+
+Application response example to MQTT via server
+
+```api
+{
+  location: "living_room",
+  sensor_reading: "10",
+  type: "temperature",
+  userId: "5",
+  warning: "Too cold 10 degree celcious! ",
 }
 ```
 

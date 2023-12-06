@@ -44,11 +44,10 @@ const delete_notification = async (req, res, next) => {
         status: 200,
       });
     } else {
-      const err = httpError(
-        `Notification with ID ${notificationId} not found`,
-        404
-      );
-      next(err);
+      res.json({
+        message: `Notification with ID ${notificationId} not found`,
+        status: 404,
+      });
     }
   } catch (error) {
     console.error("Delete notification controller error", error.message);
@@ -67,8 +66,10 @@ const delete_all_notification = async (req, res, next) => {
         status: 200,
       });
     } else {
-      const err = httpError("No notifications found to delete", 404);
-      next(err);
+      res.json({
+        message: `No notifications found to delete`,
+        status: 404,
+      });
     }
   } catch (error) {
     console.error("Delete all notification controller error", error.message);
