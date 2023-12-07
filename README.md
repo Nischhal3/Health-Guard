@@ -4,6 +4,10 @@
   <img src="client/assets/logo.png" alt="Alt text" width="300">
 </p>
 
+### Click to watch application demo
+
+[![Watch video](https://img.youtube.com/vi/tfT8Vg72tZ0/0.jpg)](https://www.youtube.com/watch?v=tfT8Vg72tZ0)
+
 # Table of Content
 
 - [Introduction](#introduction)
